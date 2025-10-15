@@ -1,0 +1,95 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        # /api/users/** -> user-service  /users/**
+        - id: user-route
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+#          filters:
+#            - StripPrefix=1
+        - id: user-internal
+          uri: lb://user-service
+          predicates:
+              - Path=/internal/users/**
+        # /api/orders/** -> order-service ? /api/orders/**(??controller??/api)
+        - id: order-route
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+          # ??? Strip????? OrderController ??? /api/orders ??
+        - id: auth_public
+          uri: lb://auth-service
+          predicates: [ Path=/api/auth/** ]
+#          filters: [ StripPrefix=1 ]
+        - id: runner-public
+          uri: lb://runner-service
+          predicates:
+              - Path=/api/runners/**
+        - id: runner-internal
+          uri: lb://runner-service
+          predicates:
+              - Path=/internal/runners/**
+        - id: merchant-public
+          uri: lb://merchant-service
+          predicates:
+            - Path=/api/merchants/**
+        - id: merchant-internal
+          uri: lb://merchant-service
+          predicates:
+            - Path=/internal/merchants/**
+        - id: admin-internal
+          uri: lb://admin-service
+          predicates:
+          - Path=/internal/admins/**
+        - id: payment-public
+          uri: lb://payment-service
+          predicates:
+          - Path=/api/payments/**
+        - id: payment-internal
+          uri: lb://payment-service
+          predicates:
+          - Path=/internal/payments/**
+        - id: notification-public
+          uri: lb://notification-service
+          predicates:
+          - Path=/api/notifications/**
+        - id: notification-internal
+          uri: lb://notification-service
+          predicates:
+          - Path=/internal/notifications/**
+      default-filters:
+        - RemoveRequestHeader=Cookie
+    discovery:
+      locator:
+        enabled: false
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+# CORS(optional)
+# spring:
+#   cloud:
+#     gateway:
+#       globalcors:
+#         corsConfigurations:
+#           '[/**]':
+#             allowedOrigins: "*"
+#             allowedMethods: "*"
+#             allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+

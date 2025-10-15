@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="config-server" />
+        <module name="auth-service" />
+        <module name="runner-service" />
+        <module name="payment-service" />
+        <module name="registry-eureka" />
+        <module name="merchant-service" />
+        <module name="user-service" />
+        <module name="order-service" />
+        <module name="gateway" />
+        <module name="admin-service" />
+        <module name="notification-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="17" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="admin-service" options="" />
+      <module name="auth-service" options="" />
+      <module name="config-server" options="" />
+      <module name="gateway" options="" />
+      <module name="merchant-service" options="" />
+      <module name="notification-service" options="" />
+      <module name="order-service" options="" />
+      <module name="payment-service" options="" />
+      <module name="registry-eureka" options="" />
+      <module name="runner-service" options="" />
+      <module name="user-service" options="" />
+    </option>
+  </component>
+</project>

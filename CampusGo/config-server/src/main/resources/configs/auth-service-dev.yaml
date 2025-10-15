@@ -1,0 +1,21 @@
+server:
+  port: 9003
+spring:
+  application:
+    name: auth-service
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web.exposure.include: health,info
+
+
+auth:
+  jwt:
+    issuer: campusgo-auth
+    # Base-64
+    secret: "campusgo_dev_super_secret_key_change_me_32bytes_min"
+    expiresMinutes: 60
