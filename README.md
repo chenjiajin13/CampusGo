@@ -167,9 +167,7 @@ CREATE TABLE order_items (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_item_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
-```
-
-![alt text](image.png)
+、、、
 
 
 
