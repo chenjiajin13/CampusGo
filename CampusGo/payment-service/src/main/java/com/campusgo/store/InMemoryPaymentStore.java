@@ -20,7 +20,7 @@ public class InMemoryPaymentStore {
     @PostConstruct
     public void initMock() {
 // Mock data
-        create(10001L, 1L, 2000L, 2999L, "CNY", PaymentMethod.Paypal);
+            create(10001L, 1L, 2000L, 2999L, "CNY", PaymentMethod.Paypal);
         create(10002L, 1L, 2001L, 1599L, "CNY", PaymentMethod.WECHAT);
     }
 

@@ -3,10 +3,9 @@ package com.campusgo.controller;
 
 import com.campusgo.dto.NotificationDTO;
 import com.campusgo.dto.TemplateSendRequest;
-import com.campusgo.mapper.NotificationMapper;
+import com.campusgo.mapper.NotificationConverter;
 import com.campusgo.service.InternalNotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,13 +21,13 @@ public class InternalNotificationController {
     /** 微服务模板发送（订单/支付/配送状态等） */
     @PostMapping("/send-template")
     public NotificationDTO sendTemplate(@RequestBody TemplateSendRequest req) {
-        return NotificationMapper.toDTO(internal.sendTemplate(req.getTemplate(), req.getTargetType(), req.getTargetId(), req.getParams(), req.getChannel()));
+        return NotificationConverter.toDTO(internal.sendTemplate(req.getTemplate(), req.getTargetType(), req.getTargetId(), req.getParams(), req.getChannel()));
     }
 
     /** The microservice directly sends a text notification */
     /** 微服务直接发送一条文本通知 */
     @PostMapping("/send-raw")
     public NotificationDTO sendRaw(@RequestBody com.campusgo.dto.NotificationCreateRequest req) {
-        return NotificationMapper.toDTO(internal.sendRaw(req.getTargetType(), req.getTargetId(), req.getChannel(), req.getTitle(), req.getContent(), req.getData()));
+        return NotificationConverter.toDTO(internal.sendRaw(req.getTargetType(), req.getTargetId(), req.getChannel(), req.getTitle(), req.getContent(), req.getData()));
     }
 }

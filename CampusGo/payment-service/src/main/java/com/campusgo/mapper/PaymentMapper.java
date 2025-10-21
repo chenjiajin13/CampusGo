@@ -1,24 +1,30 @@
 package com.campusgo.mapper;
 
-
 import com.campusgo.domain.Payment;
-import com.campusgo.dto.PaymentDTO;
+import com.campusgo.enums.PaymentMethod;
+import com.campusgo.enums.PaymentStatus;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Optional;
 
-public class PaymentMapper {
-    public static PaymentDTO toDTO(Payment p) {
-        if (p == null) return null;
-        return PaymentDTO.builder()
-                .id(p.getId())
-                .orderId(p.getOrderId())
-                .userId(p.getUserId())
-                .merchantId(p.getMerchantId())
-                .amountCents(p.getAmountCents())
-                .currency(p.getCurrency())
-                .method(p.getMethod())
-                .status(p.getStatus())
-                .providerTxnId(p.getProviderTxnId())
-                .extra(p.getExtra())
-                .build();
-    }
+@Mapper
+public interface PaymentMapper {
+
+    int insert(Payment p);                        // useGeneratedKeys=true
+
+    Optional<Payment> findById(@Param("id") Long id);
+
+    Optional<Payment> findByOrderId(@Param("orderId") Long orderId);
+
+    List<Payment> listByUser(@Param("userId") Long userId);
+
+    int updateStatus(@Param("id") Long id,
+                     @Param("status") PaymentStatus status);
+
+    int updateProviderTxnId(@Param("id") Long id,
+                            @Param("providerTxnId") String providerTxnId);
+
+    int deleteById(@Param("id") Long id);
 }

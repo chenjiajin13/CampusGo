@@ -1,24 +1,23 @@
 package com.campusgo.controller;
 
 import com.campusgo.DTO.UserDTO;
-import com.campusgo.mapper.UserMapper;
-import com.campusgo.pojo.User;
+import com.campusgo.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
+@Validated
 public class UserApiController {
 
+    private final UserService userService;
     @GetMapping("/{id}")
-    public UserDTO getUser(@PathVariable("id") Long id) {
-        // mock database
-        User user = new User();
-        user.setId(id);
-        user.setUsername("Alice-" + id);
-        user.setEmail("alice@example.com");
-        user.setPhone("18800000000");
-        user.setEnabled(true);
-        return UserMapper.toPublicDTO(user);
+    public ResponseEntity<UserDTO> getById(@PathVariable("id") Long id) {
+        UserDTO dto = userService.findById(id);
+        return dto == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(dto);
     }
-}
 
+}

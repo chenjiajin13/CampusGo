@@ -3,6 +3,19 @@ server:
 spring:
   application:
     name: notification-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_notification?useSSL=false&serverTimezone=Asia/Singapore&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.campusgo.domain
+  type-handlers-package: com.campusgo.mybatis
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 eureka:
   client:
     serviceUrl:

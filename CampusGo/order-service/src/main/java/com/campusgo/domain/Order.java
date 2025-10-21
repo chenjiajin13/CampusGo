@@ -15,4 +15,5 @@ public class Order {
     private Long amountCents;
     private String status;        // CREATED / PAID / DELIVERED
     private Instant createdAt;
+    private Instant updatedAt;
 }

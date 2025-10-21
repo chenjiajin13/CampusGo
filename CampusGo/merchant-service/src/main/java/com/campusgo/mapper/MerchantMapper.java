@@ -1,36 +1,33 @@
 package com.campusgo.mapper;
 
-
 import com.campusgo.domain.Merchant;
-import com.campusgo.dto.MerchantAuthDTO;
-import com.campusgo.dto.MerchantDTO;
+import com.campusgo.enums.MerchantStatus;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Optional;
 
-public class MerchantMapper {
-    public static MerchantDTO toDTO(Merchant m) {
-        if (m == null) return null;
-        return MerchantDTO.builder()
-                .id(m.getId())
-                .name(m.getName())
-                .phone(m.getPhone())
-                .address(m.getAddress())
-                .status(m.getStatus())
-                .latitude(m.getLatitude())
-                .longitude(m.getLongitude())
-                .rating(m.getRating())
-                .finishedOrders(m.getFinishedOrders())
-                .tags(m.getTags())
-                .build();
-    }
+@Mapper
+public interface MerchantMapper {
 
+    int insert(Merchant m); // useGeneratedKeys=true
 
-    public static MerchantAuthDTO toAuthDTO(Merchant m) {
-        if (m == null) return null;
-        return MerchantAuthDTO.builder()
-                .id(m.getId())
-                .username(m.getUsername())
-                .passwordHash(m.getPasswordHash())
-                .role("ROLE_MERCHANT")
-                .build();
-    }
+    Optional<Merchant> findById(@Param("id") Long id);
+
+    Optional<Merchant> findByUsername(@Param("username") String username);
+
+    List<Merchant> findAll();
+
+    List<Merchant> search(@Param("kw") String keyword);
+
+    int updateBasic(@Param("id") Long id,
+                    @Param("phone") String phone,
+                    @Param("address") String address,
+                    @Param("tags") List<String> tags);
+
+    int updateStatus(@Param("id") Long id,
+                     @Param("status") MerchantStatus status);
+
+    int deleteById(@Param("id") Long id);
 }

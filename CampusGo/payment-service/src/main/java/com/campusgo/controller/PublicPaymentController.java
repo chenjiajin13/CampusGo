@@ -3,7 +3,7 @@ package com.campusgo.controller;
 
 import com.campusgo.domain.Payment;
 import com.campusgo.dto.*;
-import com.campusgo.mapper.PaymentMapper;
+import com.campusgo.mapper.PaymentConverter;
 import com.campusgo.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,33 +38,33 @@ public class PublicPaymentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PaymentDTO> get(@PathVariable("id") Long id) {
-        return service.findById(id).map(PaymentMapper::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return service.findById(id).map(PaymentConverter::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
 
     @GetMapping("/order/{orderId}")
     public ResponseEntity<PaymentDTO> getByOrder(@PathVariable("orderId") Long orderId) {
-        return service.findByOrderId(orderId).map(PaymentMapper::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return service.findByOrderId(orderId).map(PaymentConverter::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
 
     @GetMapping
     public List<PaymentDTO> listByUser(@RequestParam("userId") Long userId) {
-        return service.listByUser(userId).stream().map(PaymentMapper::toDTO).collect(Collectors.toList());
+        return service.listByUser(userId).stream().map(PaymentConverter::toDTO).collect(Collectors.toList());
     }
 
 
     /** mock refund */
     @PostMapping("/{id}/refund")
     public PaymentDTO refund(@PathVariable("id") Long id, @RequestBody RefundRequest req) {
-        return PaymentMapper.toDTO(service.refund(id, req.getAmountCents(), req.getReason()));
+        return PaymentConverter.toDTO(service.refund(id, req.getAmountCents(), req.getReason()));
     }
 
 
     /** only for testing */
     @PatchMapping("/{id}/status")
     public PaymentDTO updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusRequest req) {
-        return PaymentMapper.toDTO(service.updateStatus(id, req.getStatus()));
+        return PaymentConverter.toDTO(service.updateStatus(id, req.getStatus()));
     }
 
 

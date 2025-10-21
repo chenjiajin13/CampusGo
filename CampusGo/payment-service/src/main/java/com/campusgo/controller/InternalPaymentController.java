@@ -5,7 +5,7 @@ import com.campusgo.client.NotificationClient;
 import com.campusgo.domain.Payment;
 import com.campusgo.dto.*;
 import com.campusgo.enums.*;
-import com.campusgo.mapper.PaymentMapper;
+import com.campusgo.mapper.PaymentConverter;
 import com.campusgo.service.InternalPaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,28 +27,28 @@ public class InternalPaymentController {
     /** for order-service Call: Initiate payment record */
     @PostMapping("/initiate")
     public PaymentDTO initiate(@RequestBody PaymentCreateRequest req) {
-        return PaymentMapper.toDTO(internal.initiate(req.getOrderId(), req.getUserId(), req.getMerchantId(), req.getAmountCents(), req.getCurrency(), req.getMethod()));
+        return PaymentConverter.toDTO(internal.initiate(req.getOrderId(), req.getUserId(), req.getMerchantId(), req.getAmountCents(), req.getCurrency(), req.getMethod()));
     }
 
 
     /** order-service Call: Query payment records based on order number */
     @GetMapping("/order/{orderId}")
     public ResponseEntity<PaymentDTO> getByOrder(@PathVariable("orderId") Long orderId) {
-        return internal.getByOrderId(orderId).map(PaymentMapper::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return internal.getByOrderId(orderId).map(PaymentConverter::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
 
     /** mock:failed */
     @PostMapping("/{id}/simulate/fail")
     public PaymentDTO simulateFail(@PathVariable("id") Long id) {
-        return PaymentMapper.toDTO(internal.setStatus(id, PaymentStatus.FAILED));
+        return PaymentConverter.toDTO(internal.setStatus(id, PaymentStatus.FAILED));
     }
 
     /** mock:success */
     @PostMapping("/{id}/simulate/success")
     public PaymentDTO simulateSuccess(@PathVariable("id") Long id) {
         Payment payment = internal.setStatus(id, PaymentStatus.SUCCESS);
-        PaymentDTO dto = PaymentMapper.toDTO(payment);
+        PaymentDTO dto = PaymentConverter.toDTO(payment);
 
         // send successful payment notification
         Map<String, Object> params = Map.of("orderId", payment.getOrderId());

@@ -6,8 +6,7 @@ import com.campusgo.dto.MerchantCreateRequest;
 import com.campusgo.dto.MerchantDTO;
 import com.campusgo.dto.MerchantUpdateRequest;
 import com.campusgo.dto.UpdateStatusRequest;
-import com.campusgo.enums.MerchantStatus;
-import com.campusgo.mapper.MerchantMapper;
+import com.campusgo.mapper.MerchantConverter;
 import com.campusgo.service.MerchantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,32 +30,32 @@ public class PublicMerchantController {
     @PostMapping
     public MerchantDTO create(@RequestBody MerchantCreateRequest req) {
         Merchant m = service.create(req.getUsername(), req.getPassword(), req.getName(), req.getPhone(), req.getAddress(), req.getLatitude(), req.getLongitude(), req.getTags());
-        return MerchantMapper.toDTO(m);
+        return MerchantConverter.toDTO(m);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<MerchantDTO> get(@PathVariable("id") Long id) {
-        return service.findById(id).map(MerchantMapper::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return service.findById(id).map(MerchantConverter::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
 
     @GetMapping
     public List<MerchantDTO> list(@RequestParam(value = "q", required = false) String keyword) {
         List<Merchant> list = (keyword == null) ? service.findAll() : service.search(keyword);
-        return list.stream().map(MerchantMapper::toDTO).collect(Collectors.toList());
+        return list.stream().map(MerchantConverter::toDTO).collect(Collectors.toList());
     }
 
 
     @PutMapping("/{id}")
     public MerchantDTO updateBasic(@PathVariable("id") Long id, @RequestBody MerchantUpdateRequest req) {
-        return MerchantMapper.toDTO(service.updateBasic(id, req.getPhone(), req.getAddress(), req.getTags()));
+        return MerchantConverter.toDTO(service.updateBasic(id, req.getPhone(), req.getAddress(), req.getTags()));
     }
 
 
     @PatchMapping("/{id}/status")
     public MerchantDTO updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusRequest req) {
-        return MerchantMapper.toDTO(service.updateStatus(id, req.getStatus()));
+        return MerchantConverter.toDTO(service.updateStatus(id, req.getStatus()));
     }
 
 

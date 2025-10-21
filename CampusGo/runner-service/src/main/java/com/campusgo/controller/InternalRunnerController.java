@@ -4,7 +4,7 @@ import com.campusgo.dto.RunnerAuthDTO;
 import com.campusgo.dto.RunnerDTO;
 import com.campusgo.dto.UpdateStatusRequest;
 import com.campusgo.enums.RunnerStatus;
-import com.campusgo.mapper.RunnerMapper;
+import com.campusgo.mapper.RunnerConverter;
 import com.campusgo.service.InternalRunnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class InternalRunnerController {
     @GetMapping("/by-username/{username}")
     public ResponseEntity<RunnerAuthDTO> findByUsername(@PathVariable("username") String username) {
         return internalService.findByUsername(username)
-                .map(RunnerMapper::toAuthDTO)
+                .map(RunnerConverter::toAuthDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -34,7 +34,7 @@ public class InternalRunnerController {
     @GetMapping("/assign/any-available")
     public ResponseEntity<RunnerDTO> pickAnyAvailable() {
         return internalService.findAnyAvailable()
-                .map(RunnerMapper::toPublicDTO)
+                .map(RunnerConverter::toPublicDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
@@ -45,6 +45,6 @@ public class InternalRunnerController {
     public ResponseEntity<RunnerDTO> updateStatus(@PathVariable("id")  Long id, @RequestBody UpdateStatusRequest req) {
         RunnerStatus status = req.getStatus();
         if (status == null) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(RunnerMapper.toPublicDTO(internalService.updateStatus(id, status)));
+        return ResponseEntity.ok(RunnerConverter.toPublicDTO(internalService.updateStatus(id, status)));
     }
 }

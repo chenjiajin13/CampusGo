@@ -1,32 +1,25 @@
 package com.campusgo.mapper;
 
-
 import com.campusgo.domain.Admin;
-import com.campusgo.dto.AdminAuthDTO;
-import com.campusgo.dto.AdminDTO;
+import com.campusgo.enums.AdminRole;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Optional;
 
-public class AdminMapper {
-    public static AdminDTO toDTO(Admin a) {
-        if (a == null) return null;
-        return AdminDTO.builder()
-                .id(a.getId())
-                .username(a.getUsername())
-                .email(a.getEmail())
-                .phone(a.getPhone())
-                .role(a.getRole())
-                .enabled(a.getEnabled())
-                .build();
-    }
+@Mapper
+public interface AdminMapper {
 
+    int insert(Admin a);                                  // useGeneratedKeys
 
-    public static AdminAuthDTO toAuthDTO(Admin a) {
-        if (a == null) return null;
-        return AdminAuthDTO.builder()
-                .id(a.getId())
-                .username(a.getUsername())
-                .passwordHash(a.getPasswordHash())
-                .role("ROLE_ADMIN")
-                .build();
-    }
+    Optional<Admin> findById(@Param("id") Long id);
+
+    Optional<Admin> findByUsername(@Param("username") String username);
+
+    List<Admin> findAll();
+
+    int updateStatus(@Param("id") Long id, @Param("enabled") Boolean enabled);
+
+    int deleteById(@Param("id") Long id);
 }

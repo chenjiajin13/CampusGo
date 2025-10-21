@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.NotificationMapper">
+
+    <resultMap id="NotificationMap" type="com.campusgo.domain.Notification">
+        <id     column="id"           property="id"/>
+        <result column="target_type"  property="targetType"/>
+        <result column="target_id"    property="targetId"/>
+        <result column="channel"      property="channel"/>
+        <result column="title"        property="title"/>
+        <result column="content"      property="content"/>
+        <result column="data"         property="data" typeHandler="com.campusgo.mybatis.JsonMapTypeHandler"/>
+        <result column="status"       property="status"/>
+        <result column="created_at"   property="createdAt"/>
+        <result column="sent_at"      property="sentAt"/>
+        <result column="updated_at"   property="updatedAt"/>
+    </resultMap>
+
+    <sql id="cols"><![CDATA[
+        id, target_type, target_id, channel, title, content, data, status, created_at, sent_at, updated_at
+        ]]></sql>
+
+    <insert id="insert" parameterType="com.campusgo.domain.Notification"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notifications
+        (target_type, target_id, channel, title, content, data, status, created_at, updated_at)
+        VALUES
+            (#{targetType}, #{targetId}, #{channel}, #{title}, #{content},
+             #{data, typeHandler=com.campusgo.mybatis.JsonMapTypeHandler},
+             #{status}, NOW(), NOW())
+    </insert>
+
+    <select id="findById" resultMap="NotificationMap">
+        SELECT <include refid="cols"/> FROM notifications WHERE id = #{id}
+    </select>
+
+    <select id="listInbox" resultMap="NotificationMap">
+        SELECT <include refid="cols"/> FROM notifications
+        WHERE target_type = #{type} AND target_id = #{targetId}
+        ORDER BY created_at DESC
+    </select>
+
+    <update id="markSent">
+        UPDATE notifications
+        SET status = 'SENT',
+            sent_at = NOW(),
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE notifications
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

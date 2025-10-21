@@ -9,7 +9,7 @@ import com.campusgo.dto.AdminCreateRequest;
 import com.campusgo.dto.AdminDTO;
 import com.campusgo.dto.UpdateStatusRequest;
 import com.campusgo.enums.AdminRole;
-import com.campusgo.mapper.AdminMapper;
+import com.campusgo.mapper.AdminConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ public class InternalAdminController {
     @GetMapping("/by-username/{username}")
     public ResponseEntity<AdminAuthDTO> findByUsername(@PathVariable("username") String username) {
         return service.findByUsername(username)
-                .map(AdminMapper::toAuthDTO)
+                .map(AdminConverter::toAuthDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -45,7 +45,7 @@ public class InternalAdminController {
     @PostMapping
     public AdminDTO create(@RequestBody AdminCreateRequest req) {
         Admin a = service.create(req.getUsername(), req.getPassword(), req.getEmail(), req.getPhone(), req.getRole() == null ? AdminRole.OPERATOR : req.getRole());
-        return AdminMapper.toDTO(a);
+        return AdminConverter.toDTO(a);
     }
 
 
@@ -53,7 +53,7 @@ public class InternalAdminController {
     @GetMapping("/{id}")
     public ResponseEntity<AdminDTO> get(@PathVariable("id") Long id) {
         return service.findById(id)
-                .map(AdminMapper::toDTO)
+                .map(AdminConverter::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -62,7 +62,7 @@ public class InternalAdminController {
     // get all admin
     @GetMapping
     public List<AdminDTO> list() {
-        return service.findAll().stream().map(AdminMapper::toDTO).collect(Collectors.toList());
+        return service.findAll().stream().map(AdminConverter::toDTO).collect(Collectors.toList());
     }
 
 
@@ -70,7 +70,7 @@ public class InternalAdminController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<AdminDTO> updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusRequest req) {
         if (req == null || req.getEnabled() == null) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(AdminMapper.toDTO(service.updateStatus(id, req.getEnabled())));
+        return ResponseEntity.ok(AdminConverter.toDTO(service.updateStatus(id, req.getEnabled())));
     }
 
 

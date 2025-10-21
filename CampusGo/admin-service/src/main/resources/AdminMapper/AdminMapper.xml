@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.AdminMapper">
+
+    <!-- 字段映射：role/enum 用默认 EnumTypeHandler，enabled/boolean 直接映射 -->
+    <resultMap id="AdminMap" type="com.campusgo.domain.Admin">
+        <id     column="id"             property="id"/>
+        <result column="username"       property="username"/>
+        <result column="password_hash"  property="passwordHash"/>
+        <result column="email"          property="email"/>
+        <result column="phone"          property="phone"/>
+        <result column="role"           property="role"/>
+        <result column="enabled"        property="enabled"/>
+        <result column="created_at"     property="createdAt"/>
+        <result column="updated_at"     property="updatedAt"/>
+    </resultMap>
+
+    <sql id="cols"><![CDATA[
+        id, username, password_hash, email, phone, role, enabled, created_at, updated_at
+        ]]></sql>
+
+    <insert id="insert" parameterType="com.campusgo.domain.Admin"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admins
+        (username, password_hash, email, phone, role, enabled, created_at, updated_at)
+        VALUES
+            (#{username}, #{passwordHash}, #{email}, #{phone}, #{role}, #{enabled}, NOW(), NOW())
+    </insert>
+
+    <select id="findById" resultMap="AdminMap">
+        SELECT <include refid="cols"/> FROM admins WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="AdminMap">
+        SELECT <include refid="cols"/> FROM admins WHERE username = #{username}
+    </select>
+
+    <select id="findAll" resultMap="AdminMap">
+        SELECT <include refid="cols"/> FROM admins ORDER BY id DESC
+    </select>
+
+    <update id="updateStatus">
+        UPDATE admins
+        SET enabled = #{enabled}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM admins WHERE id = #{id}
+    </delete>
+</mapper>
+
+
+
+
