@@ -36,9 +36,9 @@ public class AdminServiceImpl implements AdminService {
         return a;
     }
 
-    @Override public Optional<Admin> findById(Long id) { return mapper.findById(id); }
+    @Override public Optional<Admin> findById(Long id) { return Optional.ofNullable(mapper.findById(id)); }
 
-    @Override public Optional<Admin> findByUsername(String username) { return mapper.findByUsername(username); }
+    @Override public Optional<Admin> findByUsername(String username) { return Optional.ofNullable(mapper.findByUsername(username)); }
 
     @Override public List<Admin> findAll() { return mapper.findAll(); }
 
@@ -46,7 +46,7 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public Admin updateStatus(Long id, Boolean enabled) {
         mapper.updateStatus(id, enabled);
-        return mapper.findById(id).orElse(null);
+        return Optional.ofNullable(mapper.findById(id)).orElse(null);
     }
 
     @Override

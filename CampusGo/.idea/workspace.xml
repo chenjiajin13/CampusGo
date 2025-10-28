@@ -5,78 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/mybatisx/templates.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/mapper/AdminConverter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin-service/src/main/resources/AdminMapper/AdminMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/mapper/MerchantConverter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/mybatis/StringListJsonTypeHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/merchant-service/src/main/resources/mapper/MerchantMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/mapper/NotificationConverter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/mybatis/JsonMapTypeHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notification-service/src/main/resources/mapper/NotificationMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/mapper/OrderMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/order-service/src/main/resources/mapper/OrderMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/mapper/PaymentConverter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payment-service/src/main/resources/mapper/PaymentMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/mapper/RunnerConverter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/runner-service/src/main/resources/mapper/RunnerMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/util/UserConverters.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/resources/mapper/UserMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/mybatis/JsonMapTypeHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/pojo/Gen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/controller/InternalAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/controller/InternalAdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/AdminServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/AdminServiceApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/mapper/AdminMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/mapper/AdminMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/service/impl/AdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/service/impl/AdminServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/store/InMemoryAdminStore.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/resources/AdminMapper/AdminMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/resources/mapper/AdminMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/admin-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/admin-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/merchant-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/merchant-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/notification-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/notification-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/order-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/order-service-dev.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/payment-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/payment-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/runner-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/runner-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/user-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/user-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/InternalMerchantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/InternalMerchantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/PublicMerchantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/PublicMerchantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/domain/Merchant.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/domain/Merchant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/mapper/MerchantMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/mapper/MerchantMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/impl/InternalMerchantServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/impl/InternalMerchantServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/impl/MerchantServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/impl/MerchantServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/controller/InternalNotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/controller/InternalNotificationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/controller/PublicNotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/controller/PublicNotificationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/domain/Notification.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/domain/Notification.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/mapper/NotificationMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/mapper/NotificationMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/impl/InternalNotificationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/impl/InternalNotificationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/impl/NotificationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/impl/NotificationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/domain/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/domain/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/InternalPaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/InternalPaymentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/PublicPaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/PublicPaymentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/domain/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/domain/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/mapper/PaymentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/mapper/PaymentMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/service/impl/InternalPaymentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/service/impl/InternalPaymentServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/service/impl/PaymentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/service/impl/PaymentServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/store/InMemoryPaymentStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/store/InMemoryPaymentStore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/controller/InternalRunnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/controller/InternalRunnerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/controller/PublicRunnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/controller/PublicRunnerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/domain/Runner.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/domain/Runner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/mapper/RunnerMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/mapper/RunnerMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/impl/InternalRunnerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/impl/InternalRunnerServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/impl/RunnerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/impl/RunnerServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/UserServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/UserServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserApiController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserInternalController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/InternalUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/InternalUserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/PaymentServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/PaymentServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payment-service/src/main/resources/mapper/PaymentMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/resources/mapper/PaymentMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,6 +81,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Application.Gen.executor&quot;: &quot;Run&quot;,
     &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
     &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
@@ -181,6 +124,9 @@
     ]
   }
 }</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\NUS\Microservice\CampusGo\CampusGo\payment-service\src\main\java\com\campusgo\enums" />
@@ -205,7 +151,20 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.GatewayApplication">
+  <component name="RunManager" selected="Application.Gen">
+    <configuration name="Gen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.campusgo.pojo.Gen" />
+      <module name="user-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.campusgo.pojo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="AdminServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="admin-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.campusgo.AdminServiceApplication" />
@@ -284,6 +243,7 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.Gen" />
       <item itemvalue="Spring Boot.AdminServiceApplication" />
       <item itemvalue="Spring Boot.MerchantServiceApplication" />
       <item itemvalue="Spring Boot.NotificationServiceApplication" />
@@ -296,6 +256,11 @@
       <item itemvalue="Spring Boot.RegistryEurekaApplication" />
       <item itemvalue="Spring Boot.UserServiceApplication" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Gen" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -324,7 +289,9 @@
       <workItem from="1760505785134" duration="6278000" />
       <workItem from="1761018056103" duration="8030000" />
       <workItem from="1761034109086" duration="16027000" />
-      <workItem from="1761053710171" duration="11497000" />
+      <workItem from="1761053710171" duration="11684000" />
+      <workItem from="1761100606616" duration="17692000" />
+      <workItem from="1761128805504" duration="180000" />
     </task>
     <servers />
   </component>

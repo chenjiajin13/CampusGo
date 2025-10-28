@@ -13,9 +13,9 @@ public interface AdminMapper {
 
     int insert(Admin a);                                  // useGeneratedKeys
 
-    Optional<Admin> findById(@Param("id") Long id);
+    Admin findById(@Param("id") Long id);
 
-    Optional<Admin> findByUsername(@Param("username") String username);
+    Admin findByUsername(@Param("username") String username);
 
     List<Admin> findAll();
 

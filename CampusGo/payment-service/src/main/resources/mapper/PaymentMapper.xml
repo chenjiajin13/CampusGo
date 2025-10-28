@@ -14,7 +14,8 @@
         <result column="method"           property="method"/>
         <result column="status"           property="status"/>
         <result column="provider_txn_id"  property="providerTxnId"/>
-        <result column="extra"            property="extra"/>
+        <result column="extra"            property="extra"
+                typeHandler="com.campusgo.mybatis.JsonMapTypeHandler"/>
         <result column="created_at"       property="createdAt"/>
         <result column="updated_at"       property="updatedAt"/>
     </resultMap>
@@ -30,7 +31,7 @@
          provider_txn_id, extra,created_at, updated_at)
         VALUES
             (#{orderId}, #{userId}, #{merchantId}, #{amountCents}, #{currency},
-             #{method}, #{status}, #{providerTxnId},#{extra},
+             #{method}, #{status}, #{providerTxnId},#{extra,typeHandler=com.campusgo.mybatis.JsonMapTypeHandler},
              NOW(), NOW())
     </insert>
 

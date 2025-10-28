@@ -18,3 +18,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org.mybatis: debug
