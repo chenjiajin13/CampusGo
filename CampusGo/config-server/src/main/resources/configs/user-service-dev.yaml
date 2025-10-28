@@ -1,5 +1,6 @@
 server:
   port: 9001
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -9,6 +10,12 @@ spring:
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
 
 
 mybatis:

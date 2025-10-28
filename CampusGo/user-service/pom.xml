@@ -64,6 +64,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
     </dependencies>
 </project>
 

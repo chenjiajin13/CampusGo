@@ -1,5 +1,7 @@
 server:
   port: 9003
+  forward-headers-strategy: framework
+
 spring:
   application:
     name: auth-service
@@ -11,6 +13,12 @@ eureka:
 management:
   endpoints:
     web.exposure.include: health,info
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
 
 
 auth:

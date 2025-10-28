@@ -10,60 +10,100 @@ spring:
         # /api/users/** -> user-service  /users/**
         - id: user-route
           uri: lb://user-service
-          predicates:
-            - Path=/api/users/**
-#          filters:
+          predicates: [Path=/api/users/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
+        #          filters:
 #            - StripPrefix=1
         - id: user-internal
           uri: lb://user-service
-          predicates:
-              - Path=/internal/users/**
+          predicates: [ Path=/internal/users/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         # /api/orders/** -> order-service ? /api/orders/**(??controller??/api)
         - id: order-route
           uri: lb://order-service
-          predicates:
-            - Path=/api/orders/**
+          predicates: [ Path=/api/orders/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
           # ??? Strip????? OrderController ??? /api/orders ??
         - id: auth_public
           uri: lb://auth-service
           predicates: [ Path=/api/auth/** ]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
 #          filters: [ StripPrefix=1 ]
         - id: runner-public
           uri: lb://runner-service
-          predicates:
-              - Path=/api/runners/**
+          predicates: [ Path=/api/runners/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: runner-internal
           uri: lb://runner-service
-          predicates:
-              - Path=/internal/runners/**
+          predicates: [Path=/internal/runners/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: merchant-public
           uri: lb://merchant-service
-          predicates:
-            - Path=/api/merchants/**
+          predicates: [Path=/api/merchants/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: merchant-internal
           uri: lb://merchant-service
-          predicates:
-            - Path=/internal/merchants/**
+          predicates: [Path=/internal/merchants/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: admin-internal
           uri: lb://admin-service
-          predicates:
-          - Path=/internal/admins/**
+          predicates: [Path=/internal/admins/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: payment-public
           uri: lb://payment-service
-          predicates:
-          - Path=/api/payments/**
+          predicates:  [Path=/api/payments/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: payment-internal
           uri: lb://payment-service
-          predicates:
-          - Path=/internal/payments/**
+          predicates: [Path=/internal/payments/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: notification-public
           uri: lb://notification-service
-          predicates:
-          - Path=/api/notifications/**
+          predicates:  [Path=/api/notifications/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
         - id: notification-internal
           uri: lb://notification-service
-          predicates:
-          - Path=/internal/notifications/**
+          predicates:  [Path=/internal/notifications/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 2
       default-filters:
         - RemoveRequestHeader=Cookie
     discovery:
@@ -86,6 +126,28 @@ eureka:
 #             allowedOrigins: "*"
 #             allowedMethods: "*"
 #             allowedHeaders: "*"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    urls:
+      - name: user-service
+        url: /api/users/v3/api-docs
+      - name: order-service
+        url: /api/orders/v3/api-docs
+      - name: auth-service
+        url: /api/auth/v3/api-docs
+      - name: payment-service
+        url: /api/payments/v3/api-docs
+      - name: runner-service
+        url: /api/runners/v3/api-docs
+      - name: merchant-service
+        url: /api/merchants/v3/api-docs
+      - name: notification-service
+        url: /api/notifications/v3/api-docs
+      - name: admin-service
+        url: /api/admins/v3/api-docs
+
 
 management:
   endpoints:
