@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.MerchantMapper">
+
+    <resultMap id="MerchantMap" type="com.campusgo.domain.Merchant">
+        <id     column="id"               property="id"/>
+        <result column="username"         property="username"/>
+        <result column="password_hash"    property="passwordHash"/>
+        <result column="name"             property="name"/>
+        <result column="phone"            property="phone"/>
+        <result column="address"          property="address"/>
+        <result column="status"           property="status"/>
+        <result column="latitude"         property="latitude"/>
+        <result column="longitude"        property="longitude"/>
+        <result column="rating"           property="rating"/>
+        <result column="finished_orders"  property="finishedOrders"/>
+        <result column="tags"             property="tags"
+                typeHandler="com.campusgo.mybatis.StringListJsonTypeHandler"/>
+        <result column="created_at"       property="createdAt"/>
+        <result column="updated_at"       property="updatedAt"/>
+    </resultMap>
+
+    <sql id="cols"><![CDATA[
+        id, username, password_hash, name, phone, address, status,
+    latitude, longitude, rating, finished_orders, tags, created_at, updated_at
+        ]]></sql>
+
+    <insert id="insert" parameterType="com.campusgo.domain.Merchant"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO merchants
+        (username, password_hash, name, phone, address, status,
+         latitude, longitude, rating, finished_orders, tags, created_at, updated_at)
+        VALUES
+            (#{username}, #{passwordHash}, #{name}, #{phone}, #{address}, #{status},
+             #{latitude}, #{longitude}, #{rating}, #{finishedOrders},
+             #{tags, typeHandler=com.campusgo.mybatis.StringListJsonTypeHandler},
+             NOW(), NOW())
+    </insert>
+
+    <select id="findById" resultMap="MerchantMap">
+        SELECT <include refid="cols"/> FROM merchants WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="MerchantMap">
+        SELECT <include refid="cols"/> FROM merchants WHERE username = #{username}
+    </select>
+
+    <select id="findAll" resultMap="MerchantMap">
+        SELECT <include refid="cols"/> FROM merchants ORDER BY id DESC
+    </select>
+
+    <!-- 关键词：name/address LIKE，tags 用 JSON_SEARCH 模糊命中 -->
+    <select id="search" resultMap="MerchantMap">
+        SELECT <include refid="cols"/> FROM merchants
+        WHERE
+        (#{kw} IS NULL OR #{kw} = '' OR
+        name LIKE CONCAT('%', #{kw}, '%')
+        OR address LIKE CONCAT('%', #{kw}, '%')
+        OR JSON_SEARCH(tags, 'one', CONCAT('%', #{kw}, '%')) IS NOT NULL)
+        ORDER BY id DESC
+    </select>
+
+    <update id="updateBasic">
+        UPDATE merchants
+        SET phone = #{phone},
+            address = #{address},
+            tags = #{tags, typeHandler=com.campusgo.mybatis.StringListJsonTypeHandler},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE merchants
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM merchants WHERE id = #{id}
+    </delete>
+</mapper>
+
+
+
+
+

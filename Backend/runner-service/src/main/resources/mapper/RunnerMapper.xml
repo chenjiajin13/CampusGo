@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.RunnerMapper">
+
+
+    <resultMap id="RunnerMap" type="com.campusgo.domain.Runner">
+        <id     column="id"                  property="id"/>
+        <result column="username"            property="username"/>
+        <result column="password_hash"       property="passwordHash"/>
+        <result column="phone"               property="phone"/>
+        <result column="vehicle_type"        property="vehicleType" javaType="com.campusgo.enums.VehicleType" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="status"              property="status"       javaType="com.campusgo.enums.RunnerStatus" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="latitude"            property="latitude"/>
+        <result column="longitude"           property="longitude"/>
+        <result column="rating"              property="rating"/>
+        <result column="completed_orders"    property="completedOrders"/>
+        <result column="total_earnings_cents" property="totalEarningsCents"/>
+        <result column="created_at"          property="createdAt"/>
+        <result column="updated_at"          property="updatedAt"/>
+    </resultMap>
+
+    <sql id="cols"><![CDATA[
+        id, username, password_hash, phone, vehicle_type, status,
+    latitude, longitude, rating, completed_orders, total_earnings_cents,
+    created_at, updated_at
+        ]]></sql>
+
+    <insert id="insert" parameterType="com.campusgo.domain.Runner" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO runners
+        (username, password_hash, phone, vehicle_type, status,
+         latitude, longitude, rating, completed_orders, total_earnings_cents,
+         created_at, updated_at)
+        VALUES
+            (#{username}, #{passwordHash}, #{phone},
+             #{vehicleType,javaType=com.campusgo.enums.VehicleType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+             #{status,javaType=com.campusgo.enums.RunnerStatus,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+             #{latitude}, #{longitude}, #{rating}, #{completedOrders}, #{totalEarningsCents},
+             NOW(), NOW())
+    </insert>
+
+    <select id="findById" resultMap="RunnerMap">
+        SELECT <include refid="cols"/> FROM runners WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="RunnerMap">
+        SELECT <include refid="cols"/> FROM runners WHERE username = #{username}
+    </select>
+
+    <select id="findAll" resultMap="RunnerMap">
+        SELECT <include refid="cols"/> FROM runners ORDER BY id
+    </select>
+
+    <select id="findByStatus" resultMap="RunnerMap">
+        SELECT <include refid="cols"/> FROM runners
+        WHERE status = #{status,javaType=com.campusgo.enums.RunnerStatus,typeHandler=org.apache.ibatis.type.EnumTypeHandler}
+        ORDER BY id
+    </select>
+
+    <select id="findAnyAvailable" resultMap="RunnerMap" >
+        SELECT <include refid="cols"/> FROM runners
+        WHERE status = 'AVAILABLE'
+        ORDER BY updated_at ASC
+        LIMIT 1
+    </select>
+
+    <update id="updateBasic">
+        UPDATE runners
+        SET phone = #{phone},
+            vehicle_type = #{vehicleType,javaType=com.campusgo.enums.VehicleType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE runners
+        SET status = #{status,javaType=com.campusgo.enums.RunnerStatus,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateLocation">
+        UPDATE runners
+        SET latitude = #{lat},
+            longitude = #{lng},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM runners WHERE id = #{id}
+    </delete>
+
+</mapper>
