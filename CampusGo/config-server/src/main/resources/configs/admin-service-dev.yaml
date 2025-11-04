@@ -12,13 +12,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 springdoc:
-  api-docs:
-    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
-
-
-
+    urls:
+      - name: admin-service
+        url: /api/admins/v3/api-docs
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
