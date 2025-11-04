@@ -1,1 +1,0 @@
-export default function Dashboard(){return <div>Welcome to CampusGo Admin Dashboard</div>}
