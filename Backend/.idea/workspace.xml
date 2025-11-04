@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../CampusGo/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../CampusGo/.idea/compiler.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../CampusGo/.idea/dataSources.local.xml" beforeDir="false" />
@@ -380,7 +382,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.RegistryEurekaApplication">
+  <component name="RunManager" selected="Spring Boot.GatewayApplication">
     <configuration name="Gen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.campusgo.pojo.Gen" />
       <module name="user-service" />
@@ -525,6 +527,7 @@
       <workItem from="1762227511712" duration="13598000" />
       <workItem from="1762261438721" duration="7006000" />
       <workItem from="1762272134269" duration="294000" />
+      <workItem from="1762272446300" duration="783000" />
     </task>
     <servers />
   </component>
