@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/campus_order?useSSL=false&serverTimezone=Asia/Singapore&allowPublicKeyRetrieval=true
     username: root
-    password: 1234
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 springdoc:
@@ -23,5 +23,10 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
