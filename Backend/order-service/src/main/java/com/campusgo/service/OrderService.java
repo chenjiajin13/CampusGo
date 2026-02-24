@@ -6,6 +6,6 @@ import com.campusgo.dto.UserDTO;
 
 public interface OrderService {
     OrderDetail getOrder(Long orderId);
-    OrderDetail createOrder(Long userId, Long merchantId, String address);
+    OrderDetail createOrder(Long userId, Long merchantId, String address,String idemKey);
    }
 

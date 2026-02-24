@@ -18,10 +18,17 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderDetail create(@RequestParam Long userId,
-                              @RequestParam Long merchantId,
-                              @RequestParam(required = false) String address) {
-        return orderService.createOrder(userId, merchantId, address);
+    public OrderDetail create(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+            @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
+            @RequestParam Long merchantId,
+            @RequestParam(required = false) String address
+    ) {
+
+        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+
+        return orderService.createOrder(userId, merchantId, address, idemKey);
     }
 }
 

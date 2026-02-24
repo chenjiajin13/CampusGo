@@ -2,8 +2,11 @@ package com.campusgo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TokenPairResponse {
     private String accessToken;
     private long   accessExpiresAt;   // epoch seconds

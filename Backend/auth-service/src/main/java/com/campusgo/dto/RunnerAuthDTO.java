@@ -16,4 +16,5 @@ public class RunnerAuthDTO {
     private String username;
     private String passwordHash;
     private String role; // e.g. ROLE_RUNNER
+    private Boolean enabled;
 }

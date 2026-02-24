@@ -22,7 +22,7 @@ public class AuthInternalController {
 
     @PostMapping("/token")
     public TokenResponse issue(@RequestParam("userId") Long userId) {
-        String token = jwt.issueAccessToken(userId, props.getExpiresMinutes());
+        String token = jwt.issueAccessToken(userId, "user", props.getExpiresMinutes());
         // analyze the expiration time
         Jws<Claims> jws = jwt.parse(token);
         long exp = jws.getBody().getExpiration().toInstant().getEpochSecond();
@@ -35,12 +35,13 @@ public class AuthInternalController {
     public ResponseEntity<ValidateResponse> validate(@RequestParam("token") String token) {
         try {
             Jws<Claims> jws = jwt.parse(token);
+            String pt = jwt.principalType(jws);
             Long uid = Long.valueOf(jws.getBody().getSubject());
             long exp = jws.getBody().getExpiration().toInstant().getEpochSecond();
-            return ResponseEntity.ok(new ValidateResponse(true, uid, "OK", exp));
+            return ResponseEntity.ok(new ValidateResponse(true, uid, "OK", exp, pt));
         } catch (Exception e) {
             return ResponseEntity.status(401)
-                    .body(new ValidateResponse(false, null, e.getClass().getSimpleName(), 0L));
+                    .body(new ValidateResponse(false, null, e.getClass().getSimpleName(), 0L,""));
         }
     }
 

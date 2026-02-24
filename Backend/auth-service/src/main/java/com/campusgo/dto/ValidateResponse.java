@@ -10,5 +10,6 @@ public class ValidateResponse {
     private Long userId;       // when valid is false then null
     private String message;    // Wrong message or OK
     private long expiresAt;    // 0 means null
+    private String principalType;
 }
 

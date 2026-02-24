@@ -1,44 +1,59 @@
 package com.campusgo.service;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+
 import java.time.Instant;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class RefreshTokenStore {
 
-    // refreshToken -> (userId, expiresAt)
-    private final Map<String, RefreshEntry> store = new ConcurrentHashMap<>();
+    private final StringRedisTemplate redis;
+
+    public RefreshTokenStore(StringRedisTemplate redis) {
+        this.redis = redis;
+    }
+
+    /**
+     * Key：refreshToken -> userId
+     */
+    private String key(String refreshToken) {
+        return "campusgo:auth:rt:" + refreshToken;
+    }
+
 
     public void save(String refreshToken, Long userId, long expiresAt) {
-        store.put(refreshToken, new RefreshEntry(userId, expiresAt));
+        long now = Instant.now().getEpochSecond();
+        long ttlSeconds = expiresAt - now;
+
+
+        if (ttlSeconds <= 0) {
+
+            return;
+        }
+
+        redis.opsForValue().set(
+                key(refreshToken),
+                String.valueOf(userId),
+                ttlSeconds,
+                TimeUnit.SECONDS
+        );
     }
 
     public Long verifyAndGetUser(String refreshToken) {
-        RefreshEntry e = store.get(refreshToken);
-        if (e == null) return null;
+        String v = redis.opsForValue().get(key(refreshToken));
+        if (v == null) return null;
 
-        if (e.expiresAt < Instant.now().getEpochSecond()) {
-            store.remove(refreshToken);
+        try {
+            return Long.valueOf(v);
+        } catch (NumberFormatException ex) {
+
             return null;
         }
-        return e.userId;
     }
 
     public void revoke(String refreshToken) {
-        store.remove(refreshToken);
-    }
-
-
-    private static final class RefreshEntry {
-        final Long userId;
-        final long expiresAt;
-
-        RefreshEntry(Long userId, long expiresAt) {
-            this.userId = userId;
-            this.expiresAt = expiresAt;
-        }
+        redis.delete(key(refreshToken));
     }
 }
-

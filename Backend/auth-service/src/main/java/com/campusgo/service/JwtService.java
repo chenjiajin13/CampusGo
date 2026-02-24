@@ -19,20 +19,21 @@ public class JwtService {
 
     private SecretKey key() { return Keys.hmacShaKeyFor(props.getSecret().getBytes()); }
 
-    public String issueAccessToken(Long userId, int minutes) {
-        return issue(userId, "access", minutes);
+    public String issueAccessToken(Long userId, String pt,int minutes) {
+        return issue(userId, pt,"access", minutes);
     }
-    public String issueRefreshToken(Long userId, int minutes) {
-        return issue(userId, "refresh", minutes);
+    public String issueRefreshToken(Long userId,String pt,int minutes) {
+        return issue(userId, pt,"refresh", minutes);
     }
 
-    private String issue(Long userId, String type, int minutes) {
+    private String issue(Long userId, String pt,String type, int minutes) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(minutes * 60L);
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .setIssuer(props.getIssuer())
                 .claim("type", type)
+                .claim('pt',pt)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -50,5 +51,10 @@ public class JwtService {
     public String tokenType(Jws<Claims> jws) {
         Object t = jws.getBody().get("type");
         return t == null ? "" : t.toString();
+    }
+
+    public String principalType(Jws<Claims> jws) {
+        Object pt = jws.getBody().get("pt");
+        return pt == null ? "" : pt.toString();
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/internal/users")   // 内部调用前缀，网关/Feign 走这组
+@RequestMapping("/internal/users")
 @RequiredArgsConstructor
 @Validated
 public class UserInternalController {

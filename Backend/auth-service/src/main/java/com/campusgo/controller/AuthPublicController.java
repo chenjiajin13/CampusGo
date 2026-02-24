@@ -43,6 +43,16 @@ public class AuthPublicController {
         return ResponseEntity.ok(facade.register(req));
     }
 
+    @PostMapping("/merchant/login")
+    public TokenPairResponse merchantLogin(@RequestBody LoginRequest req) {
+        return facade.loginMerchant(req);
+    }
+
+    @PostMapping("/runner/login")
+    public TokenPairResponse runnerLogin(@RequestBody LoginRequest req) {
+        return facade.loginRunner(req);
+    }
+
     @PostMapping("/admin/login")
     public TokenPairResponse adminLogin(@RequestBody LoginRequest req) {
         return facade.loginAdmin(req);

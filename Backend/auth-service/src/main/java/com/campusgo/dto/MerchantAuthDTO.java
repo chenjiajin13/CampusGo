@@ -16,4 +16,5 @@ public class MerchantAuthDTO {
     private String username;
     private String passwordHash;
     private String role; // ROLE_MERCHANT
+    private Boolean enabled;
 }
