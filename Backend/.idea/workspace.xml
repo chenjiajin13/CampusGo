@@ -4,36 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Modify the config module">
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/exception/ErrorResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/exception/UnauthorizedException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/TokenService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/config/AuthWhitelist.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Add Redis to authservice and orderservice">
+      <change afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/config/KafkaErrorHandlerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/messaging/KafkaDedup.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/messaging/OrderEventsConsumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/config/KafkaErrorHandlerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/OrderEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/messaging/KafkaDedup.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/messaging/OrderEventPublisher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/messaging/PaymentEventsConsumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/dto/PaymentEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/messaging/PaymentEventPublisher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/controller/AuthInternalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/controller/AuthInternalController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/controller/AuthPublicController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/controller/AuthPublicController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/MerchantAuthDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/MerchantAuthDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/RunnerAuthDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/RunnerAuthDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/TokenPairResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/TokenPairResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/ValidateResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/ValidateResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/exception/GlobalErrorHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/exception/GlobalErrorHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/AuthFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/AuthFacade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/JwtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/RefreshTokenStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/RefreshTokenStore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/auth-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/auth-service-dev.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/notification-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/notification-service-dev.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/order-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/order-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/GatewayApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/GatewayApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/dto/ValidateResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/dto/ValidateResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/payment-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/payment-service-dev.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notification-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/NotificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/impl/NotificationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/service/impl/NotificationServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/OrderService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserInternalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserInternalController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payment-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/service/impl/PaymentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/service/impl/PaymentServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +68,9 @@
     &quot;accountId&quot;: &quot;22f64002-7c10-4975-9037-b230709256d4&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://D:/Develop/jdk-17.0.16/lib/src.zip!/java.base/sun/nio/ch/Net.java" root0="SKIP_INSPECTION" />
+  </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -93,7 +88,7 @@
     <option name="jreName" value="#JAVA_HOME" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="Security Analysis" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -340,7 +335,16 @@
       <workItem from="1771581021923" duration="3657000" />
       <workItem from="1771645525463" duration="10460000" />
       <workItem from="1771733380419" duration="22740000" />
-      <workItem from="1771904933607" duration="13242000" />
+      <workItem from="1771904933607" duration="19197000" />
+      <workItem from="1772015439923" duration="1311000" />
+      <workItem from="1772016999091" duration="540000" />
+      <workItem from="1772017635030" duration="195000" />
+      <workItem from="1772017870063" duration="2000" />
+      <workItem from="1772018021940" duration="22000" />
+      <workItem from="1772018066040" duration="35000" />
+      <workItem from="1772018219107" duration="290000" />
+      <workItem from="1772018526352" duration="4573000" />
+      <workItem from="1772078867214" duration="12955000" />
     </task>
     <task id="LOCAL-00001" summary="Modify the config module">
       <option name="closed" value="true" />
@@ -350,7 +354,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769664616173</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add Redis to authservice and orderservice">
+      <option name="closed" value="true" />
+      <created>1771923776607</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1771923776607</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -369,7 +381,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Modify the config module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modify the config module" />
+    <MESSAGE value="Add Redis to authservice and orderservice" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Redis to authservice and orderservice" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

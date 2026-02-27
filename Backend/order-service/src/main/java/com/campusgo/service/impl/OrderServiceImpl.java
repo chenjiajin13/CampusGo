@@ -11,6 +11,7 @@ import com.campusgo.enums.TemplateKey;
 import com.campusgo.dto.TemplateSendRequest;
 import com.campusgo.enums.NotificationChannel;
 import com.campusgo.enums.NotificationTargetType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -29,8 +30,10 @@ public class OrderServiceImpl implements OrderService {
     private final UserClient userClient;
     private final NotificationClient notificationClient;
     private final StringRedisTemplate redis;
+    private final ObjectMapper objectMapper;
 
     private static final long IDEM_TTL_MINUTES = 10;
+    private static final long USER_CACHE_TTL_MINUTES = 10;
     private static final long LOCK_TTL_SECONDS = 8;
     private static final DefaultRedisScript<Long> UNLOCK_SCRIPT = new DefaultRedisScript<>(
             "if redis.call('get', KEYS[1]) == ARGV[1] then " +
@@ -52,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
         Order o = orderMapper.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order not found: " + orderId));
 
-        UserDTO user = userClient.findById(o.getUserId());
+        UserDTO user = getUserCached(o.getUserId());
         return new OrderDetail(o.getId(), user, o.getStatus());
     }
 
@@ -109,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // 5) 查询用户并发通知
-            UserDTO user = userClient.findById(userId);
+            UserDTO user = getUserCached(userId);
 
             Map<String, Object> params = new HashMap<>();
             params.put("orderId", o.getId());
@@ -144,6 +147,40 @@ public class OrderServiceImpl implements OrderService {
 
     public List<Order> listAll() {
         return orderMapper.listAll();
+    }
+
+    private String userCacheKey(Long userId) {
+        return "campusgo:cache:user:" + userId;
+    }
+
+    private UserDTO getUserCached(Long userId) {
+        String key = userCacheKey(userId);
+
+        // 1) cache hit
+        String cached = redis.opsForValue().get(key);
+        if (cached != null) {
+            try {
+                return objectMapper.readValue(cached, UserDTO.class);
+            } catch (Exception e) {
+                // 缓存损坏/结构变更：删掉，走回源
+                redis.delete(key);
+            }
+        }
+
+        // 2) cache miss -> remote call
+        UserDTO user = userClient.findById(userId);
+
+        // 3) 回写缓存（失败不影响主流程）
+        try {
+            redis.opsForValue().set(
+                    key,
+                    objectMapper.writeValueAsString(user),
+                    USER_CACHE_TTL_MINUTES,
+                    TimeUnit.MINUTES
+            );
+        } catch (Exception ignore) {}
+
+        return user;
     }
 
 

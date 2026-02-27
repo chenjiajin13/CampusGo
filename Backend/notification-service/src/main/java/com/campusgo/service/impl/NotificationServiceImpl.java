@@ -1,6 +1,7 @@
 package com.campusgo.service.impl;
 
 import com.campusgo.domain.Notification;
+import com.campusgo.dto.OrderEvent;
 import com.campusgo.enums.NotificationChannel;
 import com.campusgo.enums.NotificationStatus;
 import com.campusgo.enums.NotificationTargetType;
@@ -43,4 +44,13 @@ public class NotificationServiceImpl implements NotificationService {
         mapper.markSent(n.getId());
         return mapper.findById(n.getId()).orElse(n);
     }
+
+    @Override
+    public void handle(OrderEvent e) {
+        String msg = "Order " + e.orderId() + " status changed: " + e.type();
+        System.out.println("[NOTIFY] " + msg);
+
+        // 以后这里替换为：站内信 / push / email / websocket 等
+    }
+
 }

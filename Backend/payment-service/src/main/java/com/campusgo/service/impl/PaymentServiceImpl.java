@@ -1,9 +1,11 @@
 package com.campusgo.service.impl;
 
 import com.campusgo.domain.Payment;
+import com.campusgo.dto.PaymentEvent;
 import com.campusgo.enums.PaymentMethod;
 import com.campusgo.enums.PaymentStatus;
 import com.campusgo.mapper.PaymentMapper;
+import com.campusgo.messaging.PaymentEventPublisher;
 import com.campusgo.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentMapper mapper;
+    private final PaymentEventPublisher publisher;
 
     @Override
     @Transactional
@@ -63,8 +68,38 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public Payment updateStatus(Long id, PaymentStatus status) {
+        Payment payment = mapper.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Payment not found"));
+
+        payment.setStatus(status);
         mapper.updateStatus(id, status);
-        return mapper.findById(id).orElse(null);
+
+        // 只在最终状态时发事件
+        if (status == PaymentStatus.SUCCESS) {
+
+            publisher.publish(new PaymentEvent(
+                    UUID.randomUUID().toString(),
+                    "PAYMENT_SUCCEEDED",
+                    payment.getOrderId(),
+                    payment.getId(),
+                    payment.getAmountCents(),
+                    System.currentTimeMillis()
+            ));
+        }
+
+        if (status == PaymentStatus.FAILED) {
+
+            publisher.publish(new PaymentEvent(
+                    UUID.randomUUID().toString(),
+                    "PAYMENT_FAILED",
+                    payment.getOrderId(),
+                    payment.getId(),
+                    payment.getAmountCents(),
+                    System.currentTimeMillis()
+            ));
+        }
+
+        return payment;
     }
 
     @Override
