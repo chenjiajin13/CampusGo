@@ -11,5 +11,7 @@ public class OrderDetail {
     private Long orderId;
     private UserDTO user;
     private String status;
+    private Long amountCents;
+    private String paymentStatus;
 }
 

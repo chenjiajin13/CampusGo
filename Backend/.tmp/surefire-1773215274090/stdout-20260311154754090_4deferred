@@ -1,0 +1,40 @@
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+15:47:54.467 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.campusgo.registryeureka.RegistryEurekaApplicationTests]: RegistryEurekaApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+15:47:54.687 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.campusgo.registryeureka.RegistryEurekaApplication for test class com.campusgo.registryeureka.RegistryEurekaApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.6)
+
+2026-03-11T15:47:55.957+08:00  INFO 30080 --- [registry-eureka] [           main] c.c.r.RegistryEurekaApplicationTests     : Starting RegistryEurekaApplicationTests using Java 17.0.16 with PID 30080 (started by ?????? in E:\NUS\Microservice\CampusGo_Backend\Backend\registry-eureka)
+2026-03-11T15:47:55.959+08:00  INFO 30080 --- [registry-eureka] [           main] c.c.r.RegistryEurekaApplicationTests     : No active profile set, falling back to 1 default profile: "default"
+2026-03-11T15:47:58.614+08:00  INFO 30080 --- [registry-eureka] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=ddebbc94-ddbf-36ae-8fd7-82bd1aa08919
+2026-03-11T15:47:58.789+08:00  WARN 30080 --- [registry-eureka] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-03-11T15:47:58.795+08:00  WARN 30080 --- [registry-eureka] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-03-11T15:48:01.930+08:00  WARN 30080 --- [registry-eureka] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-11T15:48:02.387+08:00  INFO 30080 --- [registry-eureka] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-03-11T15:48:02.422+08:00  INFO 30080 --- [registry-eureka] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-03-11T15:48:02.424+08:00  INFO 30080 --- [registry-eureka] [           main] com.netflix.discovery.DiscoveryClient    : Client configured to neither register nor query for data.
+2026-03-11T15:48:02.428+08:00  INFO 30080 --- [registry-eureka] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1773215282426 with initial instances count: 0
+2026-03-11T15:48:02.499+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.eureka.DefaultEurekaServerContext    : Initializing ...
+2026-03-11T15:48:02.502+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.eureka.cluster.PeerEurekaNodes       : Adding new peer nodes [http://localhost:8761/eureka/]
+2026-03-11T15:48:02.868+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2026-03-11T15:48:02.869+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2026-03-11T15:48:02.869+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2026-03-11T15:48:02.869+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2026-03-11T15:48:03.023+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.eureka.cluster.PeerEurekaNodes       : Replica node URL:  http://localhost:8761/eureka/
+2026-03-11T15:48:03.043+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.e.registry.AbstractInstanceRegistry  : Finished initializing remote region registries. All known remote regions: []
+2026-03-11T15:48:03.044+08:00  INFO 30080 --- [registry-eureka] [           main] c.n.eureka.DefaultEurekaServerContext    : Initialized
+2026-03-11T15:48:03.226+08:00  INFO 30080 --- [registry-eureka] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-03-11T15:48:03.325+08:00  INFO 30080 --- [registry-eureka] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application REGISTRY-EUREKA with eureka with status UP
+2026-03-11T15:48:03.345+08:00  INFO 30080 --- [registry-eureka] [      Thread-10] o.s.c.n.e.server.EurekaServerBootstrap   : isAws returned false
+2026-03-11T15:48:03.345+08:00  INFO 30080 --- [registry-eureka] [      Thread-10] o.s.c.n.e.server.EurekaServerBootstrap   : Initialized server context
+2026-03-11T15:48:03.345+08:00  INFO 30080 --- [registry-eureka] [      Thread-10] c.n.e.r.PeerAwareInstanceRegistryImpl    : Got 1 instances from neighboring DS node
+2026-03-11T15:48:03.346+08:00  INFO 30080 --- [registry-eureka] [      Thread-10] c.n.e.r.PeerAwareInstanceRegistryImpl    : Renew threshold is: 1
+2026-03-11T15:48:03.346+08:00  INFO 30080 --- [registry-eureka] [      Thread-10] c.n.e.r.PeerAwareInstanceRegistryImpl    : Changing status to UP
+2026-03-11T15:48:03.350+08:00  INFO 30080 --- [registry-eureka] [      Thread-10] e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2026-03-11T15:48:03.362+08:00  INFO 30080 --- [registry-eureka] [           main] c.c.r.RegistryEurekaApplicationTests     : Started RegistryEurekaApplicationTests in 8.368 seconds (process running for 10.357)

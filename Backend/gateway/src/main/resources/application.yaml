@@ -30,6 +30,13 @@ spring:
 #            - name: StripPrefix
 #              args:
 #                parts: 2
+        - id: user-internal-api
+          uri: lb://user-service
+          predicates: [ Path=/api/internal/users/**]
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 1
         # /api/orders/** -> order-service ? /api/orders/**(??controller??/api)
         - id: order-docs
           uri: lb://order-service
@@ -46,6 +53,10 @@ spring:
 #              args:
 #                parts: 2
           # ??? Strip????? OrderController ??? /api/orders ??
+
+        - id: cart-route
+          uri: lb://order-service
+          predicates: [ Path=/api/cart/**]
 
         - id: auth-docs
           uri: lb://auth-service
@@ -222,4 +233,3 @@ management:
     web:
       exposure:
         include: "health,info"
-

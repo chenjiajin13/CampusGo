@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "payment-service", path = "/internal/payments")
+@FeignClient(contextId = "orderPaymentClient", name = "payment-service", path = "/internal/payments")
 public interface PaymentClient {
     @PostMapping("/initiate")
     PaymentDTO initiate(@RequestBody PaymentCreateRequest req);

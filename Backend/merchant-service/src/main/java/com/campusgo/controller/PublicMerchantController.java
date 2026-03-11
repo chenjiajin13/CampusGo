@@ -5,8 +5,12 @@ import com.campusgo.domain.Merchant;
 import com.campusgo.dto.MerchantCreateRequest;
 import com.campusgo.dto.MerchantDTO;
 import com.campusgo.dto.MerchantUpdateRequest;
+import com.campusgo.dto.MenuItemDTO;
+import com.campusgo.dto.MenuItemUpsertRequest;
 import com.campusgo.dto.UpdateStatusRequest;
+import com.campusgo.mapper.MenuItemConverter;
 import com.campusgo.mapper.MerchantConverter;
+import com.campusgo.service.MenuItemService;
 import com.campusgo.service.MerchantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ public class PublicMerchantController {
 
 
     private final MerchantService service;
+    private final MenuItemService menuItemService;
 
 
     @PostMapping
@@ -62,6 +67,39 @@ public class PublicMerchantController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         return service.delete(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/menu")
+    public List<MenuItemDTO> menu(@PathVariable("id") Long merchantId) {
+        return menuItemService.listPublicMenu(merchantId)
+                .stream()
+                .map(MenuItemConverter::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping("/{id}/menu")
+    public MenuItemDTO addMenuItem(@PathVariable("id") Long merchantId,
+                                   @RequestBody MenuItemUpsertRequest req) {
+        return MenuItemConverter.toDTO(
+                menuItemService.create(merchantId, req.getName(), req.getPriceCents(), req.getEnabled())
+        );
+    }
+
+    @PutMapping("/{id}/menu/{itemId}")
+    public MenuItemDTO updateMenuItem(@PathVariable("id") Long merchantId,
+                                      @PathVariable("itemId") Long itemId,
+                                      @RequestBody MenuItemUpsertRequest req) {
+        return MenuItemConverter.toDTO(
+                menuItemService.update(merchantId, itemId, req.getName(), req.getPriceCents(), req.getEnabled())
+        );
+    }
+
+    @DeleteMapping("/{id}/menu/{itemId}")
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable("id") Long merchantId,
+                                               @PathVariable("itemId") Long itemId) {
+        return menuItemService.delete(merchantId, itemId)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
 

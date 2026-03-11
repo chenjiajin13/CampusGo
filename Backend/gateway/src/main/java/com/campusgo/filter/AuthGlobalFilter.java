@@ -3,6 +3,7 @@ package com.campusgo.filter;
 import com.campusgo.client.AuthClient;
 import com.campusgo.dto.ValidateResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
@@ -19,14 +20,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
-    private final AuthClient authClient;
+    private final ObjectProvider<AuthClient> authClientProvider;
 
-    // 白名单：不需要鉴权
+    // 白名单：不需要鉴�?
     private static final List<String> WHITELIST_PREFIX = List.of(
-            "/api/auth/",          // 登录/注册/refresh/logout
-            "/v3/api-docs",        // swagger
-            "/swagger-ui",         // swagger
-            "/actuator"            // actuator
+            "/api/auth/",
+            "/api/merchants",
+            "/v3/api-docs",
+            "/swagger-ui",
+            "/actuator"
     );
 
     @Override
@@ -44,9 +46,15 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
 
-        // ⚠️ Feign 是阻塞的，Gateway 是 WebFlux 非阻塞。
-        // 成熟做法：用 WebClient；但为了你能先跑通，这里用 boundedElastic 包一下阻塞调用。
-        return Mono.fromCallable(() -> authClient.validate(token))
+        // ⚠️ Feign 是阻塞的，Gateway �?WebFlux 非阻塞�?
+        // 成熟做法：用 WebClient；但为了你能先跑通，这里�?boundedElastic 包一下阻塞调用�?
+        return Mono.fromCallable(() -> {
+                    AuthClient authClient = authClientProvider.getIfAvailable();
+                    if (authClient == null) {
+                        throw new IllegalStateException("AuthClient bean unavailable");
+                    }
+                    return authClient.validate(token);
+                })
                 .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic())
                 .flatMap(resp -> {
                     if (resp == null || !resp.isValid()) {
@@ -85,3 +93,4 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         return -100; // 越小越先执行
     }
 }
+

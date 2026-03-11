@@ -22,8 +22,17 @@ public class JwtService {
     public String issueAccessToken(Long userId, String pt,int minutes) {
         return issue(userId, pt,"access", minutes);
     }
+
+    public String issueAccessToken(Long userId, int minutes) {
+        return issueAccessToken(userId, "user", minutes);
+    }
+
     public String issueRefreshToken(Long userId,String pt,int minutes) {
         return issue(userId, pt,"refresh", minutes);
+    }
+
+    public String issueRefreshToken(Long userId, int minutes) {
+        return issueRefreshToken(userId, "user", minutes);
     }
 
     private String issue(Long userId, String pt,String type, int minutes) {
@@ -33,7 +42,7 @@ public class JwtService {
                 .setSubject(String.valueOf(userId))
                 .setIssuer(props.getIssuer())
                 .claim("type", type)
-                .claim('pt',pt)
+                .claim("pt",pt)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))
                 .signWith(key(), SignatureAlgorithm.HS256)

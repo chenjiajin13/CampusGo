@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "runner-service",
+@FeignClient(contextId = "orderRunnerClient", name = "runner-service",
 //        url = "http://localhost:8080",
         path = "/internal/runners"
 )

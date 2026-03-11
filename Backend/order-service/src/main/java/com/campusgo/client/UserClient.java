@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-@FeignClient(name = "user-service",
+@FeignClient(contextId = "orderUserClient", name = "user-service",
 //        url = "http://localhost:8080",
         path = "/internal/users"
 )

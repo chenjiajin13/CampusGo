@@ -3,13 +3,18 @@ package com.campusgo.controller;
 
 import com.campusgo.dto.MerchantAuthDTO;
 import com.campusgo.dto.MerchantDTO;
+import com.campusgo.dto.MenuItemDTO;
 import com.campusgo.dto.UpdateStatusRequest;
+import com.campusgo.mapper.MenuItemConverter;
 import com.campusgo.mapper.MerchantConverter;
 import com.campusgo.service.InternalMerchantService;
+import com.campusgo.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/internal/merchants")
@@ -18,6 +23,7 @@ public class InternalMerchantController {
 
 
     private final InternalMerchantService internalService;
+    private final MenuItemService menuItemService;
 
 
     // for auth-service
@@ -44,5 +50,13 @@ public class InternalMerchantController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<MerchantDTO> updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusRequest req) {
         return ResponseEntity.ok(MerchantConverter.toDTO(internalService.updateStatus(id, req.getStatus())));
+    }
+
+    @GetMapping("/{id}/menu")
+    public List<MenuItemDTO> getMenu(@PathVariable("id") Long merchantId) {
+        return menuItemService.listPublicMenu(merchantId)
+                .stream()
+                .map(MenuItemConverter::toDTO)
+                .collect(Collectors.toList());
     }
 }

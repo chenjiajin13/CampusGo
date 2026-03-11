@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.MenuItemMapper">
+
+    <resultMap id="MenuItemMap" type="com.campusgo.domain.MenuItem">
+        <id column="id" property="id"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="name" property="name"/>
+        <result column="price_cents" property="priceCents"/>
+        <result column="enabled" property="enabled"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, merchant_id, name, price_cents, enabled, created_at, updated_at
+    </sql>
+
+    <insert id="insert" parameterType="com.campusgo.domain.MenuItem"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO menu_items
+            (merchant_id, name, price_cents, enabled, created_at, updated_at)
+        VALUES
+            (#{merchantId}, #{name}, #{priceCents}, #{enabled}, NOW(), NOW())
+    </insert>
+
+    <select id="findById" resultMap="MenuItemMap">
+        SELECT <include refid="cols"/> FROM menu_items WHERE id = #{id}
+    </select>
+
+    <select id="findByMerchantId" resultMap="MenuItemMap">
+        SELECT <include refid="cols"/>
+        FROM menu_items
+        WHERE merchant_id = #{merchantId}
+        ORDER BY id ASC
+    </select>
+
+    <select id="findEnabledByMerchantId" resultMap="MenuItemMap">
+        SELECT <include refid="cols"/>
+        FROM menu_items
+        WHERE merchant_id = #{merchantId}
+          AND enabled = 1
+        ORDER BY id ASC
+    </select>
+
+    <update id="update">
+        UPDATE menu_items
+        SET name = #{name},
+            price_cents = #{priceCents},
+            enabled = #{enabled},
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND merchant_id = #{merchantId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM menu_items
+        WHERE id = #{id}
+          AND merchant_id = #{merchantId}
+    </delete>
+</mapper>
+
