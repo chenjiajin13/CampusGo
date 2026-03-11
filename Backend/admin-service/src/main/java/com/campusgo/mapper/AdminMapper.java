@@ -19,6 +19,10 @@ public interface AdminMapper {
 
     List<Admin> findAll();
 
+    int updateBasic(@Param("id") Long id,
+                    @Param("email") String email,
+                    @Param("phone") String phone);
+
     int updateStatus(@Param("id") Long id, @Param("enabled") Boolean enabled);
 
     int deleteById(@Param("id") Long id);

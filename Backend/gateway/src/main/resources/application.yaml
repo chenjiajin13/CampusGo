@@ -131,6 +131,9 @@ spring:
             - name: StripPrefix
               args:
                 parts: 2
+        - id: admin-public
+          uri: lb://admin-service
+          predicates: [Path=/api/admins/**]
         - id: admin-internal
           uri: lb://admin-service
           predicates: [Path=/internal/admins/**]

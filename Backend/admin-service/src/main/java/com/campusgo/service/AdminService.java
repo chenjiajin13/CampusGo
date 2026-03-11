@@ -14,6 +14,7 @@ public interface AdminService {
     Optional<Admin> findById(Long id);
     Optional<Admin> findByUsername(String username);
     List<Admin> findAll();
+    Admin updateBasic(Long id, String email, String phone);
     Admin updateStatus(Long id, Boolean enabled);
     boolean delete(Long id);
 }

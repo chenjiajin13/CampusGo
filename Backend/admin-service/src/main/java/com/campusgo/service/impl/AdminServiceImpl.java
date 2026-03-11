@@ -44,6 +44,13 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    public Admin updateBasic(Long id, String email, String phone) {
+        mapper.updateBasic(id, email, phone);
+        return Optional.ofNullable(mapper.findById(id)).orElse(null);
+    }
+
+    @Override
+    @Transactional
     public Admin updateStatus(Long id, Boolean enabled) {
         mapper.updateStatus(id, enabled);
         return Optional.ofNullable(mapper.findById(id)).orElse(null);

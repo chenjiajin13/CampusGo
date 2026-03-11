@@ -44,6 +44,15 @@ public class PublicMerchantController {
         return service.findById(id).map(MerchantConverter::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<MerchantDTO> me(@RequestHeader("X-User-Id") Long userId,
+                                          @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) {
+            return ResponseEntity.status(403).build();
+        }
+        return service.findById(userId).map(MerchantConverter::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
 
     @GetMapping
     public List<MerchantDTO> list(@RequestParam(value = "q", required = false) String keyword) {
@@ -55,6 +64,16 @@ public class PublicMerchantController {
     @PutMapping("/{id}")
     public MerchantDTO updateBasic(@PathVariable("id") Long id, @RequestBody MerchantUpdateRequest req) {
         return MerchantConverter.toDTO(service.updateBasic(id, req.getPhone(), req.getAddress(), req.getTags()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<MerchantDTO> updateMe(@RequestHeader("X-User-Id") Long userId,
+                                                @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                                @RequestBody MerchantUpdateRequest req) {
+        if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok(MerchantConverter.toDTO(service.updateBasic(userId, req.getPhone(), req.getAddress(), req.getTags())));
     }
 
 

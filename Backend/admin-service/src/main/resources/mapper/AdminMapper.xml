@@ -41,6 +41,14 @@
         SELECT <include refid="cols"/> FROM admins ORDER BY id DESC
     </select>
 
+    <update id="updateBasic">
+        UPDATE admins
+        SET email = #{email},
+            phone = #{phone},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
     <update id="updateStatus">
         UPDATE admins
         SET enabled = #{enabled}, updated_at = NOW()

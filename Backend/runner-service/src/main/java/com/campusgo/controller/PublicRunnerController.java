@@ -37,6 +37,15 @@ public class PublicRunnerController {
         return service.findById(id).map(RunnerConverter::toPublicDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<RunnerDTO> me(@RequestHeader("X-User-Id") Long userId,
+                                        @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) {
+            return ResponseEntity.status(403).build();
+        }
+        return service.findById(userId).map(RunnerConverter::toPublicDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
 
     @GetMapping
     public List<RunnerDTO> list(@RequestParam(value = "status", required = false) RunnerStatus status) {
@@ -48,6 +57,16 @@ public class PublicRunnerController {
     @PutMapping("/{id}")
     public RunnerDTO updateBasic(@PathVariable Long id, @RequestBody RunnerUpdateRequest req) {
         return RunnerConverter.toPublicDTO(service.updateBasic(id, req.getPhone(), req.getVehicleType()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<RunnerDTO> updateMe(@RequestHeader("X-User-Id") Long userId,
+                                              @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                              @RequestBody RunnerUpdateRequest req) {
+        if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok(RunnerConverter.toPublicDTO(service.updateBasic(userId, req.getPhone(), req.getVehicleType())));
     }
 
 
