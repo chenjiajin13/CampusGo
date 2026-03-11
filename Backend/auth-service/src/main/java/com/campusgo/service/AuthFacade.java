@@ -161,6 +161,7 @@ public class AuthFacade {
         body.username = req.getUsername();
         body.passwordHash = hash;
         body.phone = req.getPhone();
+        body.address = req.getAddress();
         return userClient.register(body);
     }
 

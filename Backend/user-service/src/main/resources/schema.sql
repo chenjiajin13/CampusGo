@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(128),
+    phone VARCHAR(32),
+    address VARCHAR(255),
+    enabled TINYINT(1) NOT NULL DEFAULT 1
+);
+
+ALTER TABLE users
+    ADD COLUMN address VARCHAR(255) NULL AFTER phone;
+

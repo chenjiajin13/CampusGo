@@ -4,28 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Complete the construction of kafka as message queue">
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Addition of menu table and related interfaces and bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/0b9da47e-a87a-4bf4-a46e-d6ddb9f4c80e.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0b9da47e-a87a-4bf4-a46e-d6ddb9f4c80e.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/JwtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/merchant-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/merchant-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/InternalMerchantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/InternalMerchantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/PublicMerchantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/PublicMerchantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/OrderServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/OrderServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/MerchantClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/MerchantClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/NotificationClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/NotificationClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/PaymentClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/PaymentClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/RunnerClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/RunnerClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/UserClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/UserClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/OrderDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/OrderDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/client/UserClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/client/UserClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/dto/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/AuthFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/AuthFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/user-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/user-service-dev.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/DTO/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/DTO/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/DTO/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/DTO/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/pojo/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/pojo/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/InternalUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/InternalUserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/util/UserConverters.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/util/UserConverters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/mapper/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/mapper/UserMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,7 +165,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.MerchantServiceApplication">
+  <component name="RunManager" selected="Spring Boot.AuthServiceApplication">
     <configuration name="Gen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.campusgo.pojo.Gen" />
       <module name="user-service" />
@@ -347,7 +338,7 @@
       <workItem from="1772078867214" duration="12955000" />
       <workItem from="1772166166962" duration="1712000" />
       <workItem from="1773214964501" duration="728000" />
-      <workItem from="1773215745138" duration="7563000" />
+      <workItem from="1773215745138" duration="9603000" />
     </task>
     <task id="LOCAL-00001" summary="Modify the config module">
       <option name="closed" value="true" />
@@ -373,7 +364,15 @@
       <option name="project" value="LOCAL" />
       <updated>1772166394247</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Addition of menu table and related interfaces and bug fixes">
+      <option name="closed" value="true" />
+      <created>1773230668407</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1773230668407</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -394,7 +393,8 @@
     <MESSAGE value="Modify the config module" />
     <MESSAGE value="Add Redis to authservice and orderservice" />
     <MESSAGE value="Complete the construction of kafka as message queue" />
-    <option name="LAST_COMMIT_MESSAGE" value="Complete the construction of kafka as message queue" />
+    <MESSAGE value="Addition of menu table and related interfaces and bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Addition of menu table and related interfaces and bug fixes" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

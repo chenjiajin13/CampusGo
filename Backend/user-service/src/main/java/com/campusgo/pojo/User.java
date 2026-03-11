@@ -13,5 +13,6 @@ public class User {
     private String passwordHash;
     private String email;
     private String phone;
+    private String address;
     private Boolean enabled;
 }

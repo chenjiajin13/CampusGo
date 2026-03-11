@@ -18,6 +18,7 @@ public interface UserClient {
         public String username;
         public String passwordHash;
         public String phone;
+        public String address;
     }
 }
 

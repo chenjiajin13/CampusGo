@@ -13,6 +13,7 @@ public class UserConverters {
         dto.setUsername(u.getUsername());
         dto.setEmail(u.getEmail());
         dto.setPhone(u.getPhone());
+        dto.setAddress(u.getAddress());
         dto.setEnabled(u.getEnabled());
         return dto;
     }

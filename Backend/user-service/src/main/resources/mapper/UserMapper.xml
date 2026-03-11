@@ -10,11 +10,12 @@
         <result column="password_hash" property="passwordHash"/>
         <result column="email"         property="email"/>
         <result column="phone"         property="phone"/>
+        <result column="address"       property="address"/>
         <result column="enabled"       property="enabled"/>
     </resultMap>
 
     <sql id="BaseCols"><![CDATA[
-        id, username, password_hash, email, phone, enabled
+        id, username, password_hash, email, phone, address, enabled
         ]]></sql>
 
     <select id="findById" resultMap="UserMap">
@@ -30,8 +31,8 @@
     </select>
 
     <insert id="insert" parameterType="com.campusgo.pojo.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (username, password_hash, email, phone, enabled)
-        VALUES (#{username}, #{passwordHash}, #{email}, #{phone}, #{enabled})
+        INSERT INTO users (username, password_hash, email, phone, address, enabled)
+        VALUES (#{username}, #{passwordHash}, #{email}, #{phone}, #{address}, #{enabled})
     </insert>
 
     <update id="update" parameterType="com.campusgo.pojo.User">
@@ -41,6 +42,7 @@
             password_hash = #{passwordHash},
             email         = #{email},
             phone         = #{phone},
+            address       = #{address},
             enabled       = #{enabled}
         WHERE id = #{id}
     </update>

@@ -6,5 +6,6 @@ import lombok.Data;
 public class RegisterRequest {
     private String username;
     private String password;
-    private String phone; // 可选
+    private String phone;
+    private String address;
 }
