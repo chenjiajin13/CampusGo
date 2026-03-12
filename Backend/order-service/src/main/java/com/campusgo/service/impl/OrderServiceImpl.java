@@ -93,9 +93,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetail getOrder(Long orderId) {
         Order o = orderMapper.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order not found: " + orderId));
-
-        UserDTO user = getUserCached(o.getUserId());
-        return new OrderDetail(o.getId(), user, o.getStatus(), o.getAmountCents(), null);
+        return buildOrderDetail(o, null);
     }
 
     @Override
@@ -139,11 +137,9 @@ public class OrderServiceImpl implements OrderService {
                 redis.opsForValue().set(idemKey(userId, idemKey), String.valueOf(o.getId()), IDEM_TTL_MINUTES, TimeUnit.MINUTES);
             }
 
-            UserDTO user = getUserCached(userId);
             notifyOrderPlaced(o.getId(), userId, merchantId);
             notifyOrderAssignedIfAny(o);
-
-            return new OrderDetail(o.getId(), user, o.getStatus(), o.getAmountCents(), null);
+            return buildOrderDetail(o, null);
         } finally {
             redis.execute(UNLOCK_SCRIPT, Collections.singletonList(lk), lv);
         }
@@ -261,7 +257,6 @@ public class OrderServiceImpl implements OrderService {
             redis.opsForValue().set(idemKey(userId, idemKey), String.valueOf(o.getId()), IDEM_TTL_MINUTES, TimeUnit.MINUTES);
         }
 
-        UserDTO user = getUserCached(userId);
         notifyOrderPlaced(o.getId(), userId, req.getMerchantId());
         notifyOrderAssignedIfAny(o);
 
@@ -278,7 +273,7 @@ public class OrderServiceImpl implements OrderService {
             paymentStatus = payment == null ? null : payment.getStatus();
         }
 
-        return new OrderDetail(o.getId(), user, o.getStatus(), totalCents, paymentStatus);
+        return buildOrderDetail(o, paymentStatus);
     }
 
     @Override
@@ -370,20 +365,37 @@ public class OrderServiceImpl implements OrderService {
         if (o.getRunnerId() == null || !o.getRunnerId().equals(runnerId)) {
             throw new IllegalArgumentException("RUNNER_NOT_ASSIGNED_TO_ORDER");
         }
-        WalletSettleRequest settleReq = new WalletSettleRequest();
-        settleReq.setOrderId(orderId);
-        settleReq.setMerchantId(o.getMerchantId());
-        settleReq.setRunnerId(runnerId);
-        settleReq.setAmountCents(o.getAmountCents());
-        settleReq.setIdempotencyKey("wallet-settle:" + orderId);
-        paymentClient.walletSettle(settleReq);
+        if ("ORDER_DELIVERED".equalsIgnoreCase(o.getStatus())) {
+            return buildOrderDetail(o, null);
+        }
+        if (!"ORDER_ASSIGNED".equalsIgnoreCase(o.getStatus()) && !"ORDER_PICKED_UP".equalsIgnoreCase(o.getStatus())) {
+            throw new IllegalArgumentException("ORDER_NOT_COMPLETABLE");
+        }
+        String paymentStatus = null;
+        try {
+            WalletSettleRequest settleReq = new WalletSettleRequest();
+            settleReq.setOrderId(orderId);
+            settleReq.setMerchantId(o.getMerchantId());
+            settleReq.setRunnerId(runnerId);
+            settleReq.setAmountCents(o.getAmountCents());
+            settleReq.setIdempotencyKey("wallet-settle:" + orderId);
+            WalletOrderPaymentDTO settle = paymentClient.walletSettle(settleReq);
+            paymentStatus = settle == null ? null : settle.getStatus();
+        } catch (Exception ex) {
+            paymentStatus = "SETTLEMENT_PENDING";
+        }
 
         orderMapper.updateStatus(orderId, "ORDER_DELIVERED");
-        runnerClient.updateStatus(runnerId, UpdateStatusRequest.builder().status(RunnerStatus.AVAILABLE).build());
+        try {
+            refreshRunnerWorkloadStatus(runnerId);
+        } catch (Exception ignore) {
+        }
         Order updated = orderMapper.findById(orderId).orElseThrow();
-        notifyOrderDelivered(updated.getId(), updated.getUserId(), updated.getMerchantId());
-        UserDTO user = getUserCached(updated.getUserId());
-        return new OrderDetail(updated.getId(), user, updated.getStatus(), updated.getAmountCents(), null);
+        try {
+            notifyOrderDelivered(updated.getId(), updated.getUserId(), updated.getMerchantId());
+        } catch (Exception ignore) {
+        }
+        return buildOrderDetail(updated, paymentStatus);
     }
 
     @Transactional
@@ -395,25 +407,8 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> params = new HashMap<>();
         params.put("orderId", orderId);
 
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_PLACED)
-                        .targetType(NotificationTargetType.USER)
-                        .targetId(userId)
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
-
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_PLACED)
-                        .targetType(NotificationTargetType.MERCHANT)
-                        .targetId(merchantId)
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
+        sendTemplateToTarget(TemplateKey.ORDER_PLACED, NotificationTargetType.USER, userId, params);
+        sendTemplateToTarget(TemplateKey.ORDER_PLACED, NotificationTargetType.MERCHANT, merchantId, params);
     }
 
     private void notifyOrderAssignedIfAny(Order o) {
@@ -424,57 +419,45 @@ public class OrderServiceImpl implements OrderService {
         params.put("orderId", o.getId());
         params.put("runnerId", o.getRunnerId());
 
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_ASSIGNED)
-                        .targetType(NotificationTargetType.USER)
-                        .targetId(o.getUserId())
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_ASSIGNED)
-                        .targetType(NotificationTargetType.MERCHANT)
-                        .targetId(o.getMerchantId())
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_ASSIGNED)
-                        .targetType(NotificationTargetType.RUNNER)
-                        .targetId(o.getRunnerId())
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
+        sendTemplateToTarget(TemplateKey.ORDER_ASSIGNED, NotificationTargetType.USER, o.getUserId(), params);
+        sendTemplateToTarget(TemplateKey.ORDER_ASSIGNED, NotificationTargetType.MERCHANT, o.getMerchantId(), params);
+        sendTemplateToTarget(TemplateKey.ORDER_ASSIGNED, NotificationTargetType.RUNNER, o.getRunnerId(), params);
     }
 
     private void notifyOrderDelivered(Long orderId, Long userId, Long merchantId) {
         Map<String, Object> params = new HashMap<>();
         params.put("orderId", orderId);
 
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_DELIVERED)
-                        .targetType(NotificationTargetType.USER)
-                        .targetId(userId)
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.ORDER_DELIVERED)
-                        .targetType(NotificationTargetType.MERCHANT)
-                        .targetId(merchantId)
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
+        sendTemplateToTarget(TemplateKey.ORDER_DELIVERED, NotificationTargetType.USER, userId, params);
+        sendTemplateToTarget(TemplateKey.ORDER_DELIVERED, NotificationTargetType.MERCHANT, merchantId, params);
+    }
+
+    private void sendTemplateToTarget(TemplateKey template, NotificationTargetType targetType, Long targetId, Map<String, Object> params) {
+        try {
+            notificationClient.sendTemplate(
+                    TemplateSendRequest.builder()
+                            .template(template)
+                            .targetType(targetType)
+                            .targetId(targetId)
+                            .params(params)
+                            .channel(NotificationChannel.PUSH)
+                            .build()
+            );
+        } catch (Exception ignore) {
+        }
+        try {
+            notificationClient.sendTemplate(
+                    TemplateSendRequest.builder()
+                            .template(template)
+                            .targetType(targetType)
+                            .targetId(targetId)
+                            .params(params)
+                            .channel(NotificationChannel.EMAIL)
+                            .build()
+            );
+        } catch (Exception ignore) {
+            // email channel failure should not block order workflow
+        }
     }
 
     private void assignRunnerIfAvailable(Order o) {
@@ -485,12 +468,21 @@ public class OrderServiceImpl implements OrderService {
             }
             orderMapper.updateRunner(o.getId(), runner.getId());
             orderMapper.updateStatus(o.getId(), "ORDER_ASSIGNED");
-            runnerClient.updateStatus(runner.getId(), UpdateStatusRequest.builder().status(RunnerStatus.BUSY).build());
+            refreshRunnerWorkloadStatus(runner.getId());
             o.setRunnerId(runner.getId());
             o.setStatus("ORDER_ASSIGNED");
         } catch (Exception ignore) {
             // keep order created if runner service is temporarily unavailable
         }
+    }
+
+    private void refreshRunnerWorkloadStatus(Long runnerId) {
+        if (runnerId == null) {
+            return;
+        }
+        int active = orderMapper.countActiveByRunnerId(runnerId);
+        RunnerStatus target = active >= 2 ? RunnerStatus.BUSY : RunnerStatus.AVAILABLE;
+        runnerClient.updateStatus(runnerId, UpdateStatusRequest.builder().status(target).build());
     }
 
     private CartSummaryDTO emptyCart() {
@@ -609,10 +601,26 @@ public class OrderServiceImpl implements OrderService {
             return out;
         }
         for (Order o : orders) {
-            UserDTO user = getUserCached(o.getUserId());
-            out.add(new OrderDetail(o.getId(), user, o.getStatus(), o.getAmountCents(), null));
+            out.add(buildOrderDetail(o, null));
         }
         return out;
+    }
+
+    private OrderDetail buildOrderDetail(Order order, String paymentStatus) {
+        UserDTO user = getUserCached(order.getUserId());
+        OrderDetail detail = new OrderDetail(order.getId(), user, order.getStatus(), order.getAmountCents(), paymentStatus);
+        detail.setUserId(order.getUserId());
+        detail.setMerchantId(order.getMerchantId());
+        detail.setRunnerId(order.getRunnerId());
+        if (user != null) {
+            detail.setCustomerName(user.getUsername());
+            detail.setCustomerPhone(user.getPhone());
+            detail.setCustomerAddress(user.getAddress());
+        }
+        boolean canComplete = order.getRunnerId() != null
+                && ("ORDER_ASSIGNED".equalsIgnoreCase(order.getStatus()) || "ORDER_PICKED_UP".equalsIgnoreCase(order.getStatus()));
+        detail.setRunnerCanComplete(canComplete);
+        return detail;
     }
 
     private UserDTO getUserCached(Long userId) {

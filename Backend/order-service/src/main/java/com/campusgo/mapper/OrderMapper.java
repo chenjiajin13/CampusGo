@@ -22,6 +22,8 @@ public interface OrderMapper {
 
     List<Order> listByRunnerId(@Param("runnerId") Long runnerId);
 
+    int countActiveByRunnerId(@Param("runnerId") Long runnerId);
+
     int updateStatus(@Param("id") Long id,
                      @Param("status") String status);
 

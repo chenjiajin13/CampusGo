@@ -53,6 +53,13 @@
         ORDER BY id DESC
     </select>
 
+    <select id="countActiveByRunnerId" resultType="int">
+        SELECT COUNT(1)
+        FROM orders
+        WHERE runner_id = #{runnerId}
+          AND status IN ('ORDER_ASSIGNED', 'ORDER_PICKED_UP')
+    </select>
+
     <update id="updateStatus">
         UPDATE orders
         SET status = #{status},

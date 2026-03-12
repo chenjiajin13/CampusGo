@@ -23,8 +23,16 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderDetail detail(@PathVariable("id") Long id) {
-        return orderService.getOrder(id);
+    public OrderDetail detail(@PathVariable("id") Long id,
+                              @RequestHeader("X-User-Id") Long principalId,
+                              @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        OrderDetail detail = orderService.getOrder(id);
+        if (pt == null) throw new UnauthorizedException("FORBIDDEN");
+        if ("USER".equalsIgnoreCase(pt) && !principalId.equals(detail.getUserId())) throw new UnauthorizedException("FORBIDDEN");
+        if ("MERCHANT".equalsIgnoreCase(pt) && !principalId.equals(detail.getMerchantId())) throw new UnauthorizedException("FORBIDDEN");
+        if ("RUNNER".equalsIgnoreCase(pt) && (detail.getRunnerId() == null || !principalId.equals(detail.getRunnerId())))
+            throw new UnauthorizedException("FORBIDDEN");
+        return detail;
     }
 
     @PostMapping
@@ -112,6 +120,16 @@ public class OrderController {
                                             @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
         if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.listMerchantOrders(merchantId);
+    }
+
+    @GetMapping("/merchant/me/{orderId}")
+    public OrderDetail merchantOrderDetail(@RequestHeader("X-User-Id") Long merchantId,
+                                           @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                           @PathVariable("orderId") Long orderId) {
+        if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
+        OrderDetail detail = orderService.getOrder(orderId);
+        if (!merchantId.equals(detail.getMerchantId())) throw new UnauthorizedException("FORBIDDEN");
+        return detail;
     }
 
     @GetMapping("/runner/me")
