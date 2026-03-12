@@ -35,6 +35,24 @@
         SELECT <include refid="cols"/> FROM orders ORDER BY id DESC
     </select>
 
+    <select id="listByUserId" resultMap="OrderMap">
+        SELECT <include refid="cols"/> FROM orders
+        WHERE user_id = #{userId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="listByMerchantId" resultMap="OrderMap">
+        SELECT <include refid="cols"/> FROM orders
+        WHERE merchant_id = #{merchantId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="listByRunnerId" resultMap="OrderMap">
+        SELECT <include refid="cols"/> FROM orders
+        WHERE runner_id = #{runnerId}
+        ORDER BY id DESC
+    </select>
+
     <update id="updateStatus">
         UPDATE orders
         SET status = #{status},

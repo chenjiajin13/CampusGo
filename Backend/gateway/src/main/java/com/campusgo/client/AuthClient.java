@@ -1,7 +1,7 @@
 package com.campusgo.client;
 
 import com.campusgo.dto.TokenResponse;
-import com.campusgo.dto.ValidateResponse;
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,5 +12,5 @@ public interface AuthClient {
     TokenResponse issue(@RequestParam("userId") Long userId);
 
     @GetMapping("/validate")
-    ValidateResponse validate(@RequestParam("token") String token);
+    Response validate(@RequestParam("token") String token);
 }

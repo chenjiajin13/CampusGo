@@ -4,10 +4,12 @@ import com.campusgo.dto.CartItemRequest;
 import com.campusgo.dto.CartSummaryDTO;
 import com.campusgo.dto.OrderDetail;
 import com.campusgo.dto.QuickOrderRequest;
+import com.campusgo.dto.BatchCheckoutResponse;
 import com.campusgo.exception.UnauthorizedException;
 import com.campusgo.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+
+    private boolean isUser(String principalType) {
+        return principalType != null && "USER".equalsIgnoreCase(principalType);
+    }
 
     @GetMapping("/{id}")
     public OrderDetail detail(@PathVariable("id") Long id) {
@@ -30,7 +36,7 @@ public class OrderController {
             @RequestParam(required = false) String address
     ) {
 
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
 
         return orderService.createOrder(userId, merchantId, address, idemKey);
     }
@@ -38,7 +44,7 @@ public class OrderController {
     @GetMapping("/cart")
     public CartSummaryDTO getCart(@RequestHeader("X-User-Id") Long userId,
                                   @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.getCart(userId);
     }
 
@@ -46,7 +52,7 @@ public class OrderController {
     public CartSummaryDTO addCartItem(@RequestHeader("X-User-Id") Long userId,
                                       @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                       @RequestBody CartItemRequest req) {
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.addToCart(userId, req);
     }
 
@@ -54,14 +60,14 @@ public class OrderController {
     public CartSummaryDTO removeCartItem(@RequestHeader("X-User-Id") Long userId,
                                          @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                          @PathVariable("menuItemId") Long menuItemId) {
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.removeFromCart(userId, menuItemId);
     }
 
     @DeleteMapping("/cart")
     public void clearCart(@RequestHeader("X-User-Id") Long userId,
                           @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         orderService.clearCart(userId);
     }
 
@@ -71,8 +77,18 @@ public class OrderController {
                                     @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
                                     @RequestParam(required = false) String address,
                                     @RequestParam(defaultValue = "false") Boolean autoPay) {
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.checkoutCart(userId, address, idemKey, autoPay);
+    }
+
+    @PostMapping("/cart/checkout-batch")
+    public BatchCheckoutResponse checkoutCartBatch(@RequestHeader("X-User-Id") Long userId,
+                                                   @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                                   @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
+                                                   @RequestParam(required = false) String address,
+                                                   @RequestParam(defaultValue = "false") Boolean autoPay) {
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
+        return orderService.checkoutCartBatch(userId, address, idemKey, autoPay);
     }
 
     @PostMapping("/quick")
@@ -80,8 +96,38 @@ public class OrderController {
                                   @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                   @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
                                   @RequestBody QuickOrderRequest req) {
-        if (!"USER".equals(pt)) throw new UnauthorizedException("FORBIDDEN");
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.quickOrder(userId, req, idemKey);
     }
+
+    @GetMapping("/my")
+    public List<OrderDetail> myOrders(@RequestHeader("X-User-Id") Long userId,
+                                      @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
+        return orderService.listMyOrders(userId);
+    }
+
+    @GetMapping("/merchant/me")
+    public List<OrderDetail> merchantOrders(@RequestHeader("X-User-Id") Long merchantId,
+                                            @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
+        return orderService.listMerchantOrders(merchantId);
+    }
+
+    @GetMapping("/runner/me")
+    public List<OrderDetail> runnerOrders(@RequestHeader("X-User-Id") Long runnerId,
+                                          @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
+        return orderService.listRunnerOrders(runnerId);
+    }
+
+    @PostMapping("/runner/me/{orderId}/complete")
+    public OrderDetail completeByRunner(@RequestHeader("X-User-Id") Long runnerId,
+                                        @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                        @PathVariable("orderId") Long orderId) {
+        if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
+        return orderService.completeByRunner(runnerId, orderId);
+    }
 }
+
 

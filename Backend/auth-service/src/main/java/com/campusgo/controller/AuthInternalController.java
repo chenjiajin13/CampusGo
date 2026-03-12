@@ -40,8 +40,7 @@ public class AuthInternalController {
             long exp = jws.getBody().getExpiration().toInstant().getEpochSecond();
             return ResponseEntity.ok(new ValidateResponse(true, uid, "OK", exp, pt));
         } catch (Exception e) {
-            return ResponseEntity.status(401)
-                    .body(new ValidateResponse(false, null, e.getClass().getSimpleName(), 0L,""));
+            return ResponseEntity.ok(new ValidateResponse(false, null, e.getClass().getSimpleName(), 0L, ""));
         }
     }
 

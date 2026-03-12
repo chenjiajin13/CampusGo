@@ -16,10 +16,15 @@ public interface OrderMapper {
 
     List<Order> listAll();
 
+    List<Order> listByUserId(@Param("userId") Long userId);
+
+    List<Order> listByMerchantId(@Param("merchantId") Long merchantId);
+
+    List<Order> listByRunnerId(@Param("runnerId") Long runnerId);
+
     int updateStatus(@Param("id") Long id,
                      @Param("status") String status);
 
-    // 可选：指派骑手
     int updateRunner(@Param("id") Long id,
                      @Param("runnerId") Long runnerId);
 }

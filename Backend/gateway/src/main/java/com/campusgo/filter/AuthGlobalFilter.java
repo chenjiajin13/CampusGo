@@ -1,7 +1,9 @@
 package com.campusgo.filter;
 
 import com.campusgo.client.AuthClient;
-import com.campusgo.dto.ValidateResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,6 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.util.List;
 
 @Component
@@ -21,8 +24,8 @@ import java.util.List;
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     private final ObjectProvider<AuthClient> authClientProvider;
+    private final ObjectMapper objectMapper;
 
-    // 白名单：不需要鉴�?
     private static final List<String> WHITELIST_PREFIX = List.of(
             "/api/auth/",
             "/api/merchants",
@@ -46,30 +49,30 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
 
-        // ⚠️ Feign 是阻塞的，Gateway �?WebFlux 非阻塞�?
-        // 成熟做法：用 WebClient；但为了你能先跑通，这里�?boundedElastic 包一下阻塞调用�?
         return Mono.fromCallable(() -> {
                     AuthClient authClient = authClientProvider.getIfAvailable();
                     if (authClient == null) {
                         throw new IllegalStateException("AuthClient bean unavailable");
                     }
-                    return authClient.validate(token);
+                    Response response = authClient.validate(token);
+                    String raw = readBody(response);
+                    return parseValidate(raw);
                 })
                 .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic())
                 .flatMap(resp -> {
-                    if (resp == null || !resp.isValid()) {
-                        return unauthorized(exchange, resp == null ? "INVALID" : resp.getMessage());
+                    if (resp == null || !resp.valid) {
+                        return unauthorized(exchange, resp == null ? "INVALID" : resp.message);
                     }
 
                     ServerHttpRequest mutated = exchange.getRequest().mutate()
-                            .header("X-User-Id", String.valueOf(resp.getUserId()))
-                            .header("X-Principal-Type", resp.getPrincipalType() == null ? "" : resp.getPrincipalType())
-                            .header("X-Token-Exp", String.valueOf(resp.getExpiresAt()))
+                            .header("X-User-Id", String.valueOf(resp.userId))
+                            .header("X-Principal-Type", resp.principalType)
+                            .header("X-Token-Exp", String.valueOf(resp.expiresAt))
                             .build();
 
                     return chain.filter(exchange.mutate().request(mutated).build());
                 })
-                .onErrorResume(e -> unauthorized(exchange, e.getClass().getSimpleName()));
+                .onErrorResume(e -> unauthorized(exchange, "GW_V2_" + e.getClass().getSimpleName()));
     }
 
     private boolean isWhitelisted(String path) {
@@ -84,13 +87,44 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         byte[] bytes = ("{\"code\":\"UNAUTHORIZED\",\"message\":\"" + msg + "\"}")
                 .getBytes(StandardCharsets.UTF_8);
         exchange.getResponse().getHeaders().set("Content-Type", "application/json;charset=UTF-8");
+        exchange.getResponse().getHeaders().set("X-Gateway-Version", "gw-auth-map-v2");
         return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
                 .bufferFactory().wrap(bytes)));
     }
 
+    private ParsedValidate parseValidate(String raw) throws Exception {
+        if (raw == null || raw.isBlank()) {
+            throw new IllegalStateException("EMPTY_VALIDATE_RESPONSE");
+        }
+        JsonNode n = objectMapper.readTree(raw);
+        ParsedValidate p = new ParsedValidate();
+        p.valid = n.path("valid").asBoolean(false);
+        p.userId = n.path("userId").asLong(0L);
+        p.expiresAt = n.path("expiresAt").asLong(0L);
+        p.principalType = n.path("principalType").asText("");
+        p.message = n.path("message").asText("INVALID");
+        return p;
+    }
+
+    private String readBody(Response response) throws Exception {
+        if (response == null || response.body() == null) {
+            throw new IllegalStateException("EMPTY_VALIDATE_HTTP_BODY");
+        }
+        try (InputStream in = response.body().asInputStream()) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
+    private static class ParsedValidate {
+        boolean valid;
+        long userId;
+        long expiresAt;
+        String principalType;
+        String message;
+    }
+
     @Override
     public int getOrder() {
-        return -100; // 越小越先执行
+        return -100;
     }
 }
-

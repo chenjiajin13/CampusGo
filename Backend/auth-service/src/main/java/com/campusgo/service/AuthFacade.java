@@ -58,10 +58,10 @@ public class AuthFacade {
     public TokenPairResponse login(LoginRequest req) {
         UserAuthDTO u = userClient.findByUsername(req.getUsername());
         if (u == null || Boolean.FALSE.equals(u.getEnabled())) {
-            throw new RuntimeException("USER_NOT_FOUND_OR_DISABLED");
+            throw new UnauthorizedException("USER_NOT_FOUND_OR_DISABLED");
         }
         if (!BCrypt.checkpw(req.getPassword(), u.getPasswordHash())) {
-            throw new RuntimeException("BAD_CREDENTIALS");
+            throw new UnauthorizedException("BAD_CREDENTIALS");
         }
         return issuePairForPrincipal(u.getId(), "USER");
     }
@@ -169,10 +169,10 @@ public class AuthFacade {
     public TokenPairResponse loginRunner(LoginRequest req) {
         RunnerAuthDTO runner = runnerClient.findByUsername(req.getUsername());
         if (runner == null || Boolean.FALSE.equals(runner.getEnabled())) {
-            throw new RuntimeException("RUNNER_NOT_FOUND_OR_DISABLED");
+            throw new UnauthorizedException("RUNNER_NOT_FOUND_OR_DISABLED");
         }
         if (!BCrypt.checkpw(req.getPassword(), runner.getPasswordHash())) {
-            throw new RuntimeException("BAD_CREDENTIALS");
+            throw new UnauthorizedException("BAD_CREDENTIALS");
         }
         return issuePairForPrincipal(runner.getId(), "RUNNER");
     }
@@ -181,10 +181,10 @@ public class AuthFacade {
     public TokenPairResponse loginMerchant(LoginRequest req) {
         MerchantAuthDTO merchant = merchantClient.findByUsername(req.getUsername());
         if (merchant == null || Boolean.FALSE.equals(merchant.getEnabled())) {
-            throw new RuntimeException("MERCHANT_NOT_FOUND_OR_DISABLED");
+            throw new UnauthorizedException("MERCHANT_NOT_FOUND_OR_DISABLED");
         }
         if (!BCrypt.checkpw(req.getPassword(), merchant.getPasswordHash())) {
-            throw new RuntimeException("BAD_CREDENTIALS");
+            throw new UnauthorizedException("BAD_CREDENTIALS");
         }
         return issuePairForPrincipal(merchant.getId(), "MERCHANT");
     }
@@ -195,10 +195,10 @@ public class AuthFacade {
     public TokenPairResponse loginAdmin(LoginRequest req) {
         AdminAuthDTO admin = adminClient.findByUsername(req.getUsername());
         if (admin == null) {
-            throw new RuntimeException("ADMIN_NOT_FOUND");
+            throw new UnauthorizedException("ADMIN_NOT_FOUND");
         }
         if (!BCrypt.checkpw(req.getPassword(), admin.getPasswordHash())) {
-            throw new RuntimeException("BAD_CREDENTIALS");
+            throw new UnauthorizedException("BAD_CREDENTIALS");
         }
         return issuePairForPrincipal(admin.getId(), "ADMIN");
 

@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItemDTO {
+public class BatchCheckoutItemDTO {
+    private Long orderId;
     private Long merchantId;
-    private Long menuItemId;
-    private String name;
-    private Long unitPriceCents;
-    private Integer quantity;
-    private Long subtotalCents;
+    private Long runnerId;
+    private String orderStatus;
+    private Long amountCents;
+    private String paymentStatus;
 }

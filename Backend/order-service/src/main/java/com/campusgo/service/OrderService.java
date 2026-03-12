@@ -5,6 +5,9 @@ import com.campusgo.dto.OrderDetail;
 import com.campusgo.dto.CartSummaryDTO;
 import com.campusgo.dto.CartItemRequest;
 import com.campusgo.dto.QuickOrderRequest;
+import com.campusgo.dto.BatchCheckoutResponse;
+
+import java.util.List;
 
 public interface OrderService {
     OrderDetail getOrder(Long orderId);
@@ -14,5 +17,10 @@ public interface OrderService {
     CartSummaryDTO removeFromCart(Long userId, Long menuItemId);
     void clearCart(Long userId);
     OrderDetail checkoutCart(Long userId, String address, String idemKey, Boolean autoPay);
+    BatchCheckoutResponse checkoutCartBatch(Long userId, String address, String idemKey, Boolean autoPay);
     OrderDetail quickOrder(Long userId, QuickOrderRequest req, String idemKey);
+    List<OrderDetail> listMyOrders(Long userId);
+    List<OrderDetail> listMerchantOrders(Long merchantId);
+    List<OrderDetail> listRunnerOrders(Long runnerId);
+    OrderDetail completeByRunner(Long runnerId, Long orderId);
 }

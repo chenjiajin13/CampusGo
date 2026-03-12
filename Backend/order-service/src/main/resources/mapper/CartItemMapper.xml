@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.CartItemMapper">
+
+    <resultMap id="CartItemMap" type="com.campusgo.domain.CartItemRow">
+        <id     column="id"               property="id"/>
+        <result column="user_id"          property="userId"/>
+        <result column="merchant_id"      property="merchantId"/>
+        <result column="menu_item_id"     property="menuItemId"/>
+        <result column="quantity"         property="quantity"/>
+        <result column="unit_price_cents" property="unitPriceCents"/>
+    </resultMap>
+
+    <select id="listByUser" resultMap="CartItemMap">
+        SELECT id, user_id, merchant_id, menu_item_id, quantity, unit_price_cents
+        FROM cart_items
+        WHERE user_id = #{userId}
+        ORDER BY id ASC
+    </select>
+
+    <select id="countByUserAndMerchantNot" resultType="int">
+        SELECT COUNT(1)
+        FROM cart_items
+        WHERE user_id = #{userId}
+          AND merchant_id != #{merchantId}
+    </select>
+
+    <insert id="upsertAdd">
+        INSERT INTO cart_items
+            (user_id, merchant_id, menu_item_id, quantity, unit_price_cents, created_at, updated_at)
+        VALUES
+            (#{userId}, #{merchantId}, #{menuItemId}, #{quantity}, #{unitPriceCents}, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE
+            quantity = quantity + VALUES(quantity),
+            unit_price_cents = VALUES(unit_price_cents),
+            merchant_id = VALUES(merchant_id),
+            updated_at = NOW()
+    </insert>
+
+    <delete id="deleteItem">
+        DELETE FROM cart_items
+        WHERE user_id = #{userId}
+          AND menu_item_id = #{menuItemId}
+    </delete>
+
+    <delete id="deleteByUser">
+        DELETE FROM cart_items
+        WHERE user_id = #{userId}
+    </delete>
+</mapper>

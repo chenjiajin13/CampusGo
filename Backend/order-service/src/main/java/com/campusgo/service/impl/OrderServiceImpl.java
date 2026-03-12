@@ -3,8 +3,12 @@ package com.campusgo.service.impl;
 import com.campusgo.client.MerchantClient;
 import com.campusgo.client.NotificationClient;
 import com.campusgo.client.PaymentClient;
+import com.campusgo.client.RunnerClient;
 import com.campusgo.client.UserClient;
 import com.campusgo.domain.Order;
+import com.campusgo.domain.CartItemRow;
+import com.campusgo.dto.BatchCheckoutItemDTO;
+import com.campusgo.dto.BatchCheckoutResponse;
 import com.campusgo.dto.CartItemDTO;
 import com.campusgo.dto.CartItemRequest;
 import com.campusgo.dto.CartSummaryDTO;
@@ -13,15 +17,18 @@ import com.campusgo.dto.OrderDetail;
 import com.campusgo.dto.PaymentCreateRequest;
 import com.campusgo.dto.PaymentDTO;
 import com.campusgo.dto.QuickOrderRequest;
+import com.campusgo.dto.RunnerDTO;
 import com.campusgo.dto.TemplateSendRequest;
+import com.campusgo.dto.UpdateStatusRequest;
 import com.campusgo.dto.UserDTO;
 import com.campusgo.enums.NotificationChannel;
 import com.campusgo.enums.NotificationTargetType;
 import com.campusgo.enums.PaymentMethod;
+import com.campusgo.enums.RunnerStatus;
 import com.campusgo.enums.TemplateKey;
+import com.campusgo.mapper.CartItemMapper;
 import com.campusgo.mapper.OrderMapper;
 import com.campusgo.service.OrderService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -49,8 +56,10 @@ public class OrderServiceImpl implements OrderService {
     private final MerchantClient merchantClient;
     private final PaymentClient paymentClient;
     private final NotificationClient notificationClient;
+    private final RunnerClient runnerClient;
+    private final CartItemMapper cartItemMapper;
     private final StringRedisTemplate redis;
-    private final ObjectMapper objectMapper;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
     private static final long IDEM_TTL_MINUTES = 10;
     private static final long USER_CACHE_TTL_MINUTES = 10;
@@ -64,6 +73,8 @@ public class OrderServiceImpl implements OrderService {
     private static class CartSnapshot {
         private Long merchantId;
         private Map<Long, Integer> quantities = new LinkedHashMap<>();
+        private Map<Long, Long> unitPrices = new LinkedHashMap<>();
+        private Map<Long, Long> merchantByItem = new LinkedHashMap<>();
     }
 
     private String idemKey(Long userId, String idemKey) {
@@ -76,10 +87,6 @@ public class OrderServiceImpl implements OrderService {
 
     private String userCacheKey(Long userId) {
         return "campusgo:cache:user:" + userId;
-    }
-
-    private String cartKey(Long userId) {
-        return "campusgo:cart:user:" + userId;
     }
 
     @Override
@@ -126,6 +133,7 @@ public class OrderServiceImpl implements OrderService {
                     .updatedAt(Instant.now())
                     .build();
             orderMapper.insert(o);
+            assignRunnerIfAvailable(o);
 
             if (idemKey != null && !idemKey.isBlank()) {
                 redis.opsForValue().set(idemKey(userId, idemKey), String.valueOf(o.getId()), IDEM_TTL_MINUTES, TimeUnit.MINUTES);
@@ -133,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
 
             UserDTO user = getUserCached(userId);
             notifyOrderPlaced(o.getId(), userId, merchantId);
+            notifyOrderAssignedIfAny(o);
 
             return new OrderDetail(o.getId(), user, o.getStatus(), o.getAmountCents(), null);
         } finally {
@@ -146,35 +155,29 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("INVALID_CART_ITEM");
         }
 
-        CartSnapshot snapshot = readCart(userId);
-        if (snapshot == null) {
-            snapshot = new CartSnapshot();
-            snapshot.setMerchantId(req.getMerchantId());
-        }
-
-        if (snapshot.getMerchantId() != null && !snapshot.getMerchantId().equals(req.getMerchantId())) {
-            throw new IllegalArgumentException("CART_SINGLE_MERCHANT_ONLY");
-        }
-
         Map<Long, MenuItemDTO> menuMap = menuMap(req.getMerchantId());
         MenuItemDTO menuItem = menuMap.get(req.getMenuItemId());
         if (menuItem == null || Boolean.FALSE.equals(menuItem.getEnabled())) {
             throw new NoSuchElementException("MENU_ITEM_NOT_FOUND");
         }
 
-        snapshot.getQuantities().merge(req.getMenuItemId(), req.getQuantity(), Integer::sum);
-        snapshot.setMerchantId(req.getMerchantId());
-        saveCart(userId, snapshot);
-        return toSummary(snapshot, menuMap);
+        cartItemMapper.upsertAdd(
+                userId,
+                req.getMerchantId(),
+                req.getMenuItemId(),
+                req.getQuantity(),
+                menuItem.getPriceCents()
+        );
+        return toSummary(readCart(userId));
     }
 
     @Override
     public CartSummaryDTO getCart(Long userId) {
         CartSnapshot snapshot = readCart(userId);
-        if (snapshot == null || snapshot.getMerchantId() == null || snapshot.getQuantities().isEmpty()) {
+        if (snapshot == null || snapshot.getQuantities().isEmpty()) {
             return emptyCart();
         }
-        return toSummary(snapshot, menuMap(snapshot.getMerchantId()));
+        return toSummary(snapshot);
     }
 
     @Override
@@ -183,30 +186,32 @@ public class OrderServiceImpl implements OrderService {
         if (snapshot == null || snapshot.getQuantities().isEmpty()) {
             return emptyCart();
         }
-        snapshot.getQuantities().remove(menuItemId);
-        if (snapshot.getQuantities().isEmpty()) {
-            clearCart(userId);
+        cartItemMapper.deleteItem(userId, menuItemId);
+        CartSnapshot after = readCart(userId);
+        if (after == null || after.getQuantities().isEmpty()) {
             return emptyCart();
         }
-        saveCart(userId, snapshot);
-        return toSummary(snapshot, menuMap(snapshot.getMerchantId()));
+        return toSummary(after);
     }
 
     @Override
     public void clearCart(Long userId) {
-        redis.delete(cartKey(userId));
+        cartItemMapper.deleteByUser(userId);
     }
 
     @Override
     @Transactional
     public OrderDetail checkoutCart(Long userId, String address, String idemKey, Boolean autoPay) {
         CartSnapshot snapshot = readCart(userId);
-        if (snapshot == null || snapshot.getMerchantId() == null || snapshot.getQuantities().isEmpty()) {
+        if (snapshot == null || snapshot.getQuantities().isEmpty()) {
             throw new IllegalArgumentException("CART_EMPTY");
         }
-
         QuickOrderRequest req = new QuickOrderRequest();
-        req.setMerchantId(snapshot.getMerchantId());
+        Long merchantId = snapshot.getMerchantId();
+        if (merchantId == null) {
+            throw new IllegalArgumentException("MULTI_MERCHANT_CHECKOUT_USE_BATCH");
+        }
+        req.setMerchantId(merchantId);
         req.setAddress(address);
         req.setAutoPay(autoPay);
         List<CartItemRequest> items = new ArrayList<>();
@@ -250,6 +255,7 @@ public class OrderServiceImpl implements OrderService {
                 .updatedAt(Instant.now())
                 .build();
         orderMapper.insert(o);
+        assignRunnerIfAvailable(o);
 
         if (idemKey != null && !idemKey.isBlank()) {
             redis.opsForValue().set(idemKey(userId, idemKey), String.valueOf(o.getId()), IDEM_TTL_MINUTES, TimeUnit.MINUTES);
@@ -257,6 +263,7 @@ public class OrderServiceImpl implements OrderService {
 
         UserDTO user = getUserCached(userId);
         notifyOrderPlaced(o.getId(), userId, req.getMerchantId());
+        notifyOrderAssignedIfAny(o);
 
         String paymentStatus = null;
         if (Boolean.TRUE.equals(req.getAutoPay())) {
@@ -276,8 +283,99 @@ public class OrderServiceImpl implements OrderService {
         return new OrderDetail(o.getId(), user, o.getStatus(), totalCents, paymentStatus);
     }
 
+    @Override
+    @Transactional
+    public BatchCheckoutResponse checkoutCartBatch(Long userId, String address, String idemKey, Boolean autoPay) {
+        CartSnapshot snapshot = readCart(userId);
+        if (snapshot == null || snapshot.getQuantities().isEmpty()) {
+            throw new IllegalArgumentException("CART_EMPTY");
+        }
+
+        Map<Long, List<CartItemRequest>> grouped = new LinkedHashMap<>();
+        for (Map.Entry<Long, Integer> e : snapshot.getQuantities().entrySet()) {
+            Long menuItemId = e.getKey();
+            Integer qty = e.getValue();
+            Long merchantId = snapshot.getMerchantByItem().get(menuItemId);
+            if (merchantId == null || qty == null || qty <= 0) {
+                continue;
+            }
+            grouped.computeIfAbsent(merchantId, k -> new ArrayList<>())
+                    .add(new CartItemRequest(merchantId, menuItemId, qty));
+        }
+        if (grouped.isEmpty()) {
+            throw new IllegalArgumentException("CART_EMPTY");
+        }
+
+        List<BatchCheckoutItemDTO> created = new ArrayList<>();
+        long total = 0L;
+        boolean allPaid = true;
+        int idx = 0;
+        for (Map.Entry<Long, List<CartItemRequest>> g : grouped.entrySet()) {
+            QuickOrderRequest req = new QuickOrderRequest();
+            req.setMerchantId(g.getKey());
+            req.setAddress(address);
+            req.setItems(g.getValue());
+            req.setAutoPay(autoPay);
+
+            String merchantIdem = (idemKey == null || idemKey.isBlank()) ? null : idemKey + ":" + g.getKey() + ":" + idx;
+            OrderDetail d = quickOrder(userId, req, merchantIdem);
+            idx++;
+            total += d.getAmountCents() == null ? 0L : d.getAmountCents();
+            boolean paid = "SUCCESS".equalsIgnoreCase(d.getPaymentStatus());
+            allPaid = allPaid && (Boolean.TRUE.equals(autoPay) ? paid : true);
+            Order persisted = orderMapper.findById(d.getOrderId()).orElse(null);
+            created.add(BatchCheckoutItemDTO.builder()
+                    .orderId(d.getOrderId())
+                    .merchantId(g.getKey())
+                    .runnerId(persisted == null ? null : persisted.getRunnerId())
+                    .orderStatus(d.getStatus())
+                    .amountCents(d.getAmountCents())
+                    .paymentStatus(d.getPaymentStatus())
+                    .build());
+        }
+
+        clearCart(userId);
+        return BatchCheckoutResponse.builder()
+                .orderCount(created.size())
+                .totalAmountCents(total)
+                .allPaid(Boolean.TRUE.equals(autoPay) ? allPaid : false)
+                .orders(created)
+                .build();
+    }
+
     public List<Order> listAll() {
         return orderMapper.listAll();
+    }
+
+    @Override
+    public List<OrderDetail> listMyOrders(Long userId) {
+        return toOrderDetails(orderMapper.listByUserId(userId));
+    }
+
+    @Override
+    public List<OrderDetail> listMerchantOrders(Long merchantId) {
+        return toOrderDetails(orderMapper.listByMerchantId(merchantId));
+    }
+
+    @Override
+    public List<OrderDetail> listRunnerOrders(Long runnerId) {
+        return toOrderDetails(orderMapper.listByRunnerId(runnerId));
+    }
+
+    @Override
+    @Transactional
+    public OrderDetail completeByRunner(Long runnerId, Long orderId) {
+        Order o = orderMapper.findById(orderId)
+                .orElseThrow(() -> new NoSuchElementException("Order not found: " + orderId));
+        if (o.getRunnerId() == null || !o.getRunnerId().equals(runnerId)) {
+            throw new IllegalArgumentException("RUNNER_NOT_ASSIGNED_TO_ORDER");
+        }
+        orderMapper.updateStatus(orderId, "ORDER_DELIVERED");
+        runnerClient.updateStatus(runnerId, UpdateStatusRequest.builder().status(RunnerStatus.AVAILABLE).build());
+        Order updated = orderMapper.findById(orderId).orElseThrow();
+        notifyOrderDelivered(updated.getId(), updated.getUserId(), updated.getMerchantId());
+        UserDTO user = getUserCached(updated.getUserId());
+        return new OrderDetail(updated.getId(), user, updated.getStatus(), updated.getAmountCents(), null);
     }
 
     @Transactional
@@ -310,6 +408,83 @@ public class OrderServiceImpl implements OrderService {
         );
     }
 
+    private void notifyOrderAssignedIfAny(Order o) {
+        if (o.getRunnerId() == null) {
+            return;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderId", o.getId());
+        params.put("runnerId", o.getRunnerId());
+
+        notificationClient.sendTemplate(
+                TemplateSendRequest.builder()
+                        .template(TemplateKey.ORDER_ASSIGNED)
+                        .targetType(NotificationTargetType.USER)
+                        .targetId(o.getUserId())
+                        .params(params)
+                        .channel(NotificationChannel.PUSH)
+                        .build()
+        );
+        notificationClient.sendTemplate(
+                TemplateSendRequest.builder()
+                        .template(TemplateKey.ORDER_ASSIGNED)
+                        .targetType(NotificationTargetType.MERCHANT)
+                        .targetId(o.getMerchantId())
+                        .params(params)
+                        .channel(NotificationChannel.PUSH)
+                        .build()
+        );
+        notificationClient.sendTemplate(
+                TemplateSendRequest.builder()
+                        .template(TemplateKey.ORDER_ASSIGNED)
+                        .targetType(NotificationTargetType.RUNNER)
+                        .targetId(o.getRunnerId())
+                        .params(params)
+                        .channel(NotificationChannel.PUSH)
+                        .build()
+        );
+    }
+
+    private void notifyOrderDelivered(Long orderId, Long userId, Long merchantId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderId", orderId);
+
+        notificationClient.sendTemplate(
+                TemplateSendRequest.builder()
+                        .template(TemplateKey.ORDER_DELIVERED)
+                        .targetType(NotificationTargetType.USER)
+                        .targetId(userId)
+                        .params(params)
+                        .channel(NotificationChannel.PUSH)
+                        .build()
+        );
+        notificationClient.sendTemplate(
+                TemplateSendRequest.builder()
+                        .template(TemplateKey.ORDER_DELIVERED)
+                        .targetType(NotificationTargetType.MERCHANT)
+                        .targetId(merchantId)
+                        .params(params)
+                        .channel(NotificationChannel.PUSH)
+                        .build()
+        );
+    }
+
+    private void assignRunnerIfAvailable(Order o) {
+        try {
+            RunnerDTO runner = runnerClient.pickAnyAvailable();
+            if (runner == null || runner.getId() == null) {
+                return;
+            }
+            orderMapper.updateRunner(o.getId(), runner.getId());
+            orderMapper.updateStatus(o.getId(), "ORDER_ASSIGNED");
+            runnerClient.updateStatus(runner.getId(), UpdateStatusRequest.builder().status(RunnerStatus.BUSY).build());
+            o.setRunnerId(runner.getId());
+            o.setStatus("ORDER_ASSIGNED");
+        } catch (Exception ignore) {
+            // keep order created if runner service is temporarily unavailable
+        }
+    }
+
     private CartSummaryDTO emptyCart() {
         return CartSummaryDTO.builder()
                 .merchantId(null)
@@ -320,24 +495,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private CartSnapshot readCart(Long userId) {
-        String raw = redis.opsForValue().get(cartKey(userId));
-        if (raw == null || raw.isBlank()) {
+        List<CartItemRow> rows = cartItemMapper.listByUser(userId);
+        if (rows == null || rows.isEmpty()) {
             return null;
         }
-        try {
-            return objectMapper.readValue(raw, CartSnapshot.class);
-        } catch (Exception e) {
-            redis.delete(cartKey(userId));
+        CartSnapshot snapshot = new CartSnapshot();
+        for (CartItemRow row : rows) {
+            if (row == null || row.getMenuItemId() == null || row.getQuantity() == null || row.getQuantity() <= 0) {
+                continue;
+            }
+            if (snapshot.getMerchantId() == null) {
+                snapshot.setMerchantId(row.getMerchantId());
+            }
+            snapshot.getQuantities().put(row.getMenuItemId(), row.getQuantity());
+            snapshot.getUnitPrices().put(row.getMenuItemId(), row.getUnitPriceCents());
+            snapshot.getMerchantByItem().put(row.getMenuItemId(), row.getMerchantId());
+        }
+        if (snapshot.getMerchantId() == null || snapshot.getQuantities().isEmpty()) {
             return null;
         }
-    }
-
-    private void saveCart(Long userId, CartSnapshot snapshot) {
-        try {
-            redis.opsForValue().set(cartKey(userId), objectMapper.writeValueAsString(snapshot), 2, TimeUnit.DAYS);
-        } catch (Exception e) {
-            throw new RuntimeException("CART_SAVE_FAILED", e);
+        if (hasMultipleMerchants(snapshot)) {
+            snapshot.setMerchantId(null);
         }
+        return snapshot;
     }
 
     private Map<Long, MenuItemDTO> menuMap(Long merchantId) {
@@ -353,24 +533,40 @@ public class OrderServiceImpl implements OrderService {
         return map;
     }
 
-    private CartSummaryDTO toSummary(CartSnapshot snapshot, Map<Long, MenuItemDTO> menuMap) {
+    private CartSummaryDTO toSummary(CartSnapshot snapshot) {
+        if (snapshot == null || snapshot.getQuantities().isEmpty()) {
+            return emptyCart();
+        }
+        Map<Long, Map<Long, MenuItemDTO>> menusByMerchant = new HashMap<>();
+        for (Long merchantId : snapshot.getMerchantByItem().values()) {
+            if (merchantId != null && !menusByMerchant.containsKey(merchantId)) {
+                menusByMerchant.put(merchantId, menuMap(merchantId));
+            }
+        }
         List<CartItemDTO> items = new ArrayList<>();
         long totalCents = 0L;
         int totalQty = 0;
 
         for (Map.Entry<Long, Integer> entry : snapshot.getQuantities().entrySet()) {
+            Long merchantId = snapshot.getMerchantByItem().get(entry.getKey());
+            Map<Long, MenuItemDTO> menuMap = merchantId == null ? Collections.emptyMap() : menusByMerchant.getOrDefault(merchantId, Collections.emptyMap());
             MenuItemDTO menuItem = menuMap.get(entry.getKey());
-            if (menuItem == null || Boolean.FALSE.equals(menuItem.getEnabled())) {
+            Long unitPrice = snapshot.getUnitPrices().get(entry.getKey());
+            if (menuItem != null && Boolean.FALSE.equals(menuItem.getEnabled())) {
                 continue;
             }
             int qty = entry.getValue();
-            long subtotal = menuItem.getPriceCents() * qty;
+            if (unitPrice == null) {
+                unitPrice = menuItem == null ? 0L : menuItem.getPriceCents();
+            }
+            long subtotal = unitPrice * qty;
             totalCents += subtotal;
             totalQty += qty;
             items.add(CartItemDTO.builder()
-                    .menuItemId(menuItem.getId())
-                    .name(menuItem.getName())
-                    .unitPriceCents(menuItem.getPriceCents())
+                    .menuItemId(entry.getKey())
+                    .merchantId(merchantId)
+                    .name(menuItem == null ? "Item#" + entry.getKey() : menuItem.getName())
+                    .unitPriceCents(unitPrice)
                     .quantity(qty)
                     .subtotalCents(subtotal)
                     .build());
@@ -382,6 +578,33 @@ public class OrderServiceImpl implements OrderService {
                 .totalQuantity(totalQty)
                 .totalCents(totalCents)
                 .build();
+    }
+
+    private boolean hasMultipleMerchants(CartSnapshot snapshot) {
+        Long first = null;
+        for (Long merchantId : snapshot.getMerchantByItem().values()) {
+            if (merchantId == null) continue;
+            if (first == null) {
+                first = merchantId;
+                continue;
+            }
+            if (!first.equals(merchantId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<OrderDetail> toOrderDetails(List<Order> orders) {
+        List<OrderDetail> out = new ArrayList<>();
+        if (orders == null) {
+            return out;
+        }
+        for (Order o : orders) {
+            UserDTO user = getUserCached(o.getUserId());
+            out.add(new OrderDetail(o.getId(), user, o.getStatus(), o.getAmountCents(), null));
+        }
+        return out;
     }
 
     private UserDTO getUserCached(Long userId) {
