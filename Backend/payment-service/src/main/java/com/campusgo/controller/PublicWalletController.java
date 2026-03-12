@@ -37,7 +37,7 @@ public class PublicWalletController {
     @GetMapping("/me/transactions")
     public ResponseEntity<List<WalletTransactionDTO>> meTransactions(@RequestHeader("X-User-Id") Long userId,
                                                                      @RequestHeader(value = "X-Principal-Type", required = false) String pt,
-                                                                     @RequestParam(defaultValue = "50") Integer limit) {
+                                                                     @RequestParam(value = "limit", defaultValue = "50") Integer limit) {
         WalletOwnerType ownerType = ownerTypeFromPrincipal(pt);
         if (ownerType == null) {
             return ResponseEntity.status(403).build();

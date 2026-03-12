@@ -87,7 +87,7 @@ public class InternalPaymentController {
     @GetMapping("/wallet/{ownerType}/{ownerId}/transactions")
     public List<WalletTransactionDTO> walletTransactions(@PathVariable("ownerType") WalletOwnerType ownerType,
                                                          @PathVariable("ownerId") Long ownerId,
-                                                         @RequestParam(defaultValue = "50") Integer limit) {
+                                                         @RequestParam(value = "limit", defaultValue = "50") Integer limit) {
         return walletService.listTransactions(ownerType, ownerId, limit);
     }
 

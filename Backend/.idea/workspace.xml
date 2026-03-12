@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Modify the adding to cart logic and add an order viewing interface.">
+    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Modify the table structure and recharge/deduction logic of payservice.">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0b9da47e-a87a-4bf4-a46e-d6ddb9f4c80e.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0b9da47e-a87a-4bf4-a46e-d6ddb9f4c80e.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/payment-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/payment-service-dev.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/PaymentClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/client/PaymentClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/CartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/CartController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/InternalPaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/InternalPaymentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/PublicWalletController.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/PublicWalletController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,8 +92,8 @@
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
+    "RequestMappingsPanelWidth0": "432",
+    "RequestMappingsPanelWidth1": "431",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -158,7 +159,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.GatewayApplication">
+  <component name="RunManager" selected="Spring Boot.NotificationServiceApplication">
     <configuration name="Gen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.campusgo.pojo.Gen" />
       <module name="user-service" />
@@ -331,7 +332,7 @@
       <workItem from="1772078867214" duration="12955000" />
       <workItem from="1772166166962" duration="1712000" />
       <workItem from="1773214964501" duration="728000" />
-      <workItem from="1773215745138" duration="21874000" />
+      <workItem from="1773215745138" duration="23998000" />
     </task>
     <task id="LOCAL-00001" summary="Modify the config module">
       <option name="closed" value="true" />
@@ -389,7 +390,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773299716538</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Modify the table structure and recharge/deduction logic of payservice.">
+      <option name="closed" value="true" />
+      <created>1773302471707</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1773302471707</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -414,7 +423,8 @@
     <MESSAGE value="Add the address for the user" />
     <MESSAGE value="Add the PUT interface for all the users" />
     <MESSAGE value="Modify the adding to cart logic and add an order viewing interface." />
-    <option name="LAST_COMMIT_MESSAGE" value="Modify the adding to cart logic and add an order viewing interface." />
+    <MESSAGE value="Modify the table structure and recharge/deduction logic of payservice." />
+    <option name="LAST_COMMIT_MESSAGE" value="Modify the table structure and recharge/deduction logic of payservice." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

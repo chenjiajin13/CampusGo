@@ -32,8 +32,8 @@ public class OrderController {
             @RequestHeader("X-User-Id") Long userId,
             @RequestHeader(value = "X-Principal-Type", required = false) String pt,
             @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
-            @RequestParam Long merchantId,
-            @RequestParam(required = false) String address
+            @RequestParam("merchantId") Long merchantId,
+            @RequestParam(value = "address", required = false) String address
     ) {
 
         if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
@@ -75,8 +75,8 @@ public class OrderController {
     public OrderDetail checkoutCart(@RequestHeader("X-User-Id") Long userId,
                                     @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                     @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
-                                    @RequestParam(required = false) String address,
-                                    @RequestParam(defaultValue = "false") Boolean autoPay) {
+                                    @RequestParam(value = "address", required = false) String address,
+                                    @RequestParam(value = "autoPay", defaultValue = "false") Boolean autoPay) {
         if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.checkoutCart(userId, address, idemKey, autoPay);
     }
@@ -85,8 +85,8 @@ public class OrderController {
     public BatchCheckoutResponse checkoutCartBatch(@RequestHeader("X-User-Id") Long userId,
                                                    @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                                    @RequestHeader(value = "Idempotency-Key", required = false) String idemKey,
-                                                   @RequestParam(required = false) String address,
-                                                   @RequestParam(defaultValue = "false") Boolean autoPay) {
+                                                   @RequestParam(value = "address", required = false) String address,
+                                                   @RequestParam(value = "autoPay", defaultValue = "false") Boolean autoPay) {
         if (!isUser(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.checkoutCartBatch(userId, address, idemKey, autoPay);
     }
