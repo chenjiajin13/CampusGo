@@ -7,10 +7,12 @@ import com.campusgo.dto.*;
 import com.campusgo.enums.*;
 import com.campusgo.mapper.PaymentConverter;
 import com.campusgo.service.InternalPaymentService;
+import com.campusgo.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -21,6 +23,7 @@ public class InternalPaymentController {
 
 
     private final InternalPaymentService internal;
+    private final WalletService walletService;
     private final NotificationClient notificationClient;
 
 
@@ -63,5 +66,35 @@ public class InternalPaymentController {
         );
 
         return dto;
+    }
+
+    @PostMapping("/wallet/pay-order")
+    public WalletOrderPaymentDTO payOrder(@RequestBody WalletPayOrderRequest req) {
+        return walletService.payOrder(req);
+    }
+
+    @PostMapping("/wallet/settle")
+    public WalletOrderPaymentDTO settle(@RequestBody WalletSettleRequest req) {
+        return walletService.settle(req);
+    }
+
+    @GetMapping("/wallet/{ownerType}/{ownerId}")
+    public WalletAccountDTO wallet(@PathVariable("ownerType") WalletOwnerType ownerType,
+                                   @PathVariable("ownerId") Long ownerId) {
+        return walletService.getWallet(ownerType, ownerId);
+    }
+
+    @GetMapping("/wallet/{ownerType}/{ownerId}/transactions")
+    public List<WalletTransactionDTO> walletTransactions(@PathVariable("ownerType") WalletOwnerType ownerType,
+                                                         @PathVariable("ownerId") Long ownerId,
+                                                         @RequestParam(defaultValue = "50") Integer limit) {
+        return walletService.listTransactions(ownerType, ownerId, limit);
+    }
+
+    @PostMapping("/wallet/{ownerType}/{ownerId}/topup")
+    public WalletAccountDTO topup(@PathVariable("ownerType") WalletOwnerType ownerType,
+                                  @PathVariable("ownerId") Long ownerId,
+                                  @RequestBody WalletTopupRequest req) {
+        return walletService.topup(ownerType, ownerId, req.getAmountCents(), req.getIdempotencyKey(), req.getRemark());
     }
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.WalletAccountMapper">
+
+    <resultMap id="WalletAccountMap" type="com.campusgo.domain.WalletAccount">
+        <id column="id" property="id"/>
+        <result column="owner_type" property="ownerType"/>
+        <result column="owner_id" property="ownerId"/>
+        <result column="balance_cents" property="balanceCents"/>
+        <result column="frozen_cents" property="frozenCents"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findByOwner" resultMap="WalletAccountMap">
+        SELECT id, owner_type, owner_id, balance_cents, frozen_cents, status, created_at, updated_at
+        FROM wallet_account
+        WHERE owner_type = #{ownerType}
+          AND owner_id = #{ownerId}
+    </select>
+
+    <select id="findByOwnerForUpdate" resultMap="WalletAccountMap">
+        SELECT id, owner_type, owner_id, balance_cents, frozen_cents, status, created_at, updated_at
+        FROM wallet_account
+        WHERE owner_type = #{ownerType}
+          AND owner_id = #{ownerId}
+        FOR UPDATE
+    </select>
+
+    <insert id="insert" parameterType="com.campusgo.domain.WalletAccount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO wallet_account
+        (owner_type, owner_id, balance_cents, frozen_cents, status, created_at, updated_at)
+        VALUES
+            (#{ownerType}, #{ownerId}, #{balanceCents}, #{frozenCents}, #{status}, NOW(), NOW())
+    </insert>
+
+    <update id="updateBalance">
+        UPDATE wallet_account
+        SET balance_cents = #{balanceCents},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>

@@ -3,6 +3,9 @@ package com.campusgo.client;
 
 import com.campusgo.dto.PaymentCreateRequest;
 import com.campusgo.dto.PaymentDTO;
+import com.campusgo.dto.WalletOrderPaymentDTO;
+import com.campusgo.dto.WalletPayOrderRequest;
+import com.campusgo.dto.WalletSettleRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,4 +25,10 @@ public interface PaymentClient {
 
     @PostMapping("/{id}/simulate/fail")
     PaymentDTO simulateFail(@PathVariable("id") Long id);
+
+    @PostMapping("/wallet/pay-order")
+    WalletOrderPaymentDTO walletPayOrder(@RequestBody WalletPayOrderRequest req);
+
+    @PostMapping("/wallet/settle")
+    WalletOrderPaymentDTO walletSettle(@RequestBody WalletSettleRequest req);
 }

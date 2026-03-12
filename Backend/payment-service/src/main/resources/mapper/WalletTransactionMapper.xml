@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.WalletTransactionMapper">
+
+    <resultMap id="WalletTxnMap" type="com.campusgo.domain.WalletTransaction">
+        <id column="id" property="id"/>
+        <result column="account_id" property="accountId"/>
+        <result column="biz_type" property="bizType"/>
+        <result column="direction" property="direction"/>
+        <result column="amount_cents" property="amountCents"/>
+        <result column="order_id" property="orderId"/>
+        <result column="idempotency_key" property="idempotencyKey"/>
+        <result column="remark" property="remark"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.campusgo.domain.WalletTransaction" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO wallet_transaction
+        (account_id, biz_type, direction, amount_cents, order_id, idempotency_key, remark, created_at)
+        VALUES
+            (#{accountId}, #{bizType}, #{direction}, #{amountCents}, #{orderId}, #{idempotencyKey}, #{remark}, NOW())
+    </insert>
+
+    <select id="listByAccountId" resultMap="WalletTxnMap">
+        SELECT id, account_id, biz_type, direction, amount_cents, order_id, idempotency_key, remark, created_at
+        FROM wallet_transaction
+        WHERE account_id = #{accountId}
+        ORDER BY id DESC
+        LIMIT #{limit}
+    </select>
+</mapper>

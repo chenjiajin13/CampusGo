@@ -14,16 +14,16 @@ import com.campusgo.dto.CartItemRequest;
 import com.campusgo.dto.CartSummaryDTO;
 import com.campusgo.dto.MenuItemDTO;
 import com.campusgo.dto.OrderDetail;
-import com.campusgo.dto.PaymentCreateRequest;
-import com.campusgo.dto.PaymentDTO;
 import com.campusgo.dto.QuickOrderRequest;
 import com.campusgo.dto.RunnerDTO;
 import com.campusgo.dto.TemplateSendRequest;
 import com.campusgo.dto.UpdateStatusRequest;
 import com.campusgo.dto.UserDTO;
+import com.campusgo.dto.WalletOrderPaymentDTO;
+import com.campusgo.dto.WalletPayOrderRequest;
+import com.campusgo.dto.WalletSettleRequest;
 import com.campusgo.enums.NotificationChannel;
 import com.campusgo.enums.NotificationTargetType;
-import com.campusgo.enums.PaymentMethod;
 import com.campusgo.enums.RunnerStatus;
 import com.campusgo.enums.TemplateKey;
 import com.campusgo.mapper.CartItemMapper;
@@ -267,17 +267,15 @@ public class OrderServiceImpl implements OrderService {
 
         String paymentStatus = null;
         if (Boolean.TRUE.equals(req.getAutoPay())) {
-            PaymentDTO payment = paymentClient.initiate(
-                    PaymentCreateRequest.builder()
-                            .orderId(o.getId())
-                            .userId(userId)
-                            .merchantId(req.getMerchantId())
-                            .amountCents(totalCents)
-                            .currency("SGD")
-                            .method(PaymentMethod.WALLET)
-                            .build()
-            );
-            paymentStatus = payment == null || payment.getStatus() == null ? null : payment.getStatus().name();
+            WalletPayOrderRequest payReq = new WalletPayOrderRequest();
+            payReq.setOrderId(o.getId());
+            payReq.setUserId(userId);
+            payReq.setMerchantId(req.getMerchantId());
+            payReq.setRunnerId(o.getRunnerId());
+            payReq.setAmountCents(totalCents);
+            payReq.setIdempotencyKey("wallet-pay:" + o.getId());
+            WalletOrderPaymentDTO payment = paymentClient.walletPayOrder(payReq);
+            paymentStatus = payment == null ? null : payment.getStatus();
         }
 
         return new OrderDetail(o.getId(), user, o.getStatus(), totalCents, paymentStatus);
@@ -321,7 +319,9 @@ public class OrderServiceImpl implements OrderService {
             OrderDetail d = quickOrder(userId, req, merchantIdem);
             idx++;
             total += d.getAmountCents() == null ? 0L : d.getAmountCents();
-            boolean paid = "SUCCESS".equalsIgnoreCase(d.getPaymentStatus());
+            boolean paid = "PAID_ESCROW".equalsIgnoreCase(d.getPaymentStatus())
+                    || "SETTLED".equalsIgnoreCase(d.getPaymentStatus())
+                    || "SUCCESS".equalsIgnoreCase(d.getPaymentStatus());
             allPaid = allPaid && (Boolean.TRUE.equals(autoPay) ? paid : true);
             Order persisted = orderMapper.findById(d.getOrderId()).orElse(null);
             created.add(BatchCheckoutItemDTO.builder()
@@ -370,6 +370,14 @@ public class OrderServiceImpl implements OrderService {
         if (o.getRunnerId() == null || !o.getRunnerId().equals(runnerId)) {
             throw new IllegalArgumentException("RUNNER_NOT_ASSIGNED_TO_ORDER");
         }
+        WalletSettleRequest settleReq = new WalletSettleRequest();
+        settleReq.setOrderId(orderId);
+        settleReq.setMerchantId(o.getMerchantId());
+        settleReq.setRunnerId(runnerId);
+        settleReq.setAmountCents(o.getAmountCents());
+        settleReq.setIdempotencyKey("wallet-settle:" + orderId);
+        paymentClient.walletSettle(settleReq);
+
         orderMapper.updateStatus(orderId, "ORDER_DELIVERED");
         runnerClient.updateStatus(runnerId, UpdateStatusRequest.builder().status(RunnerStatus.AVAILABLE).build());
         Order updated = orderMapper.findById(orderId).orElseThrow();

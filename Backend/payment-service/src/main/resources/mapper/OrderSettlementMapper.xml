@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.OrderSettlementMapper">
+
+    <resultMap id="OrderSettlementMap" type="com.campusgo.domain.OrderSettlement">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="runner_id" property="runnerId"/>
+        <result column="gross_cents" property="grossCents"/>
+        <result column="merchant_cents" property="merchantCents"/>
+        <result column="runner_cents" property="runnerCents"/>
+        <result column="status" property="status"/>
+        <result column="idempotency_key" property="idempotencyKey"/>
+        <result column="settled_at" property="settledAt"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findByOrderId" resultMap="OrderSettlementMap">
+        SELECT id, order_id, merchant_id, runner_id, gross_cents, merchant_cents, runner_cents, status, idempotency_key, settled_at, created_at, updated_at
+        FROM order_settlement
+        WHERE order_id = #{orderId}
+    </select>
+
+    <select id="findByIdempotencyKey" resultMap="OrderSettlementMap">
+        SELECT id, order_id, merchant_id, runner_id, gross_cents, merchant_cents, runner_cents, status, idempotency_key, settled_at, created_at, updated_at
+        FROM order_settlement
+        WHERE idempotency_key = #{idempotencyKey}
+    </select>
+
+    <insert id="insert" parameterType="com.campusgo.domain.OrderSettlement" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO order_settlement
+        (order_id, merchant_id, runner_id, gross_cents, merchant_cents, runner_cents, status, idempotency_key, settled_at, created_at, updated_at)
+        VALUES
+            (#{orderId}, #{merchantId}, #{runnerId}, #{grossCents}, #{merchantCents}, #{runnerCents}, #{status}, #{idempotencyKey}, #{settledAt}, NOW(), NOW())
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE order_settlement
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>
