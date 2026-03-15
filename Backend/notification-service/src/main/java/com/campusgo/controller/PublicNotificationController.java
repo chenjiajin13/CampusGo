@@ -31,15 +31,25 @@ public class PublicNotificationController {
 
     @GetMapping("/inbox/me")
     public List<NotificationDTO> inboxMe(@RequestHeader("X-User-Id") Long targetId,
+                                         @RequestParam(value = "type", required = false) String type,
                                          @RequestHeader(value = "X-Principal-Type", required = false) String principalType) {
-        NotificationTargetType targetType = switch (principalType == null ? "" : principalType.toUpperCase()) {
-            case "USER" -> NotificationTargetType.USER;
-            case "MERCHANT" -> NotificationTargetType.MERCHANT;
-            case "RUNNER" -> NotificationTargetType.RUNNER;
-            case "ADMIN" -> NotificationTargetType.ADMIN;
-            default -> NotificationTargetType.USER;
-        };
+        NotificationTargetType targetType = parseTargetType(type);
+        if (targetType == null) {
+            targetType = parseTargetType(principalType);
+        }
+        if (targetType == null) {
+            targetType = NotificationTargetType.USER;
+        }
         return service.inbox(targetType, targetId).stream().map(NotificationConverter::toDTO).collect(Collectors.toList());
+    }
+
+    private NotificationTargetType parseTargetType(String raw) {
+        if (raw == null || raw.isBlank()) return null;
+        try {
+            return NotificationTargetType.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     // test

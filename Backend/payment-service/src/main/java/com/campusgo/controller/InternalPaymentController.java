@@ -55,15 +55,7 @@ public class InternalPaymentController {
 
         // send successful payment notification
         Map<String, Object> params = Map.of("orderId", payment.getOrderId());
-        notificationClient.sendTemplate(
-                TemplateSendRequest.builder()
-                        .template(TemplateKey.PAYMENT_SUCCESS)
-                        .targetType(NotificationTargetType.USER)
-                        .targetId(payment.getUserId())
-                        .params(params)
-                        .channel(NotificationChannel.PUSH)
-                        .build()
-        );
+        notifyTemplateBothChannels(TemplateKey.PAYMENT_SUCCESS, NotificationTargetType.USER, payment.getUserId(), params);
 
         return dto;
     }
@@ -75,7 +67,11 @@ public class InternalPaymentController {
 
     @PostMapping("/wallet/settle")
     public WalletOrderPaymentDTO settle(@RequestBody WalletSettleRequest req) {
-        return walletService.settle(req);
+        WalletOrderPaymentDTO dto = walletService.settle(req);
+        Map<String, Object> params = Map.of("orderId", req.getOrderId());
+        notifyTemplateBothChannels(TemplateKey.PAYMENT_SUCCESS, NotificationTargetType.MERCHANT, req.getMerchantId(), params);
+        notifyTemplateBothChannels(TemplateKey.PAYMENT_SUCCESS, NotificationTargetType.RUNNER, req.getRunnerId(), params);
+        return dto;
     }
 
     @GetMapping("/wallet/{ownerType}/{ownerId}")
@@ -96,5 +92,35 @@ public class InternalPaymentController {
                                   @PathVariable("ownerId") Long ownerId,
                                   @RequestBody WalletTopupRequest req) {
         return walletService.topup(ownerType, ownerId, req.getAmountCents(), req.getIdempotencyKey(), req.getRemark());
+    }
+
+    private void notifyTemplateBothChannels(TemplateKey template,
+                                            NotificationTargetType targetType,
+                                            Long targetId,
+                                            Map<String, Object> params) {
+        try {
+            notificationClient.sendTemplate(
+                    TemplateSendRequest.builder()
+                            .template(template)
+                            .targetType(targetType)
+                            .targetId(targetId)
+                            .params(params)
+                            .channel(NotificationChannel.PUSH)
+                            .build()
+            );
+        } catch (Exception ignore) {
+        }
+        try {
+            notificationClient.sendTemplate(
+                    TemplateSendRequest.builder()
+                            .template(template)
+                            .targetType(targetType)
+                            .targetId(targetId)
+                            .params(params)
+                            .channel(NotificationChannel.EMAIL)
+                            .build()
+            );
+        } catch (Exception ignore) {
+        }
     }
 }

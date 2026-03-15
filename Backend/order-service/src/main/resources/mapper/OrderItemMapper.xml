@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusgo.mapper.OrderItemMapper">
+
+    <insert id="insertBatch">
+        INSERT INTO order_items
+            (order_id, merchant_id, menu_item_id, item_name, unit_price_cents, quantity, subtotal_cents, created_at)
+        VALUES
+        <foreach collection="items" item="it" separator=",">
+            (#{it.orderId}, #{it.merchantId}, #{it.menuItemId}, #{it.itemName}, #{it.unitPriceCents}, #{it.quantity}, #{it.subtotalCents}, NOW())
+        </foreach>
+    </insert>
+
+</mapper>

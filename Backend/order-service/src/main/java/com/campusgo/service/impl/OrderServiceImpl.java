@@ -7,11 +7,16 @@ import com.campusgo.client.RunnerClient;
 import com.campusgo.client.UserClient;
 import com.campusgo.domain.Order;
 import com.campusgo.domain.CartItemRow;
+import com.campusgo.domain.OrderItem;
 import com.campusgo.dto.BatchCheckoutItemDTO;
 import com.campusgo.dto.BatchCheckoutResponse;
 import com.campusgo.dto.CartItemDTO;
 import com.campusgo.dto.CartItemRequest;
 import com.campusgo.dto.CartSummaryDTO;
+import com.campusgo.dto.MerchantAnalyticsDTO;
+import com.campusgo.dto.MerchantDailyRevenueDTO;
+import com.campusgo.dto.MerchantDailyRevenueRow;
+import com.campusgo.dto.MerchantItemShareDTO;
 import com.campusgo.dto.MenuItemDTO;
 import com.campusgo.dto.OrderDetail;
 import com.campusgo.dto.QuickOrderRequest;
@@ -28,6 +33,7 @@ import com.campusgo.enums.RunnerStatus;
 import com.campusgo.enums.TemplateKey;
 import com.campusgo.mapper.CartItemMapper;
 import com.campusgo.mapper.OrderMapper;
+import com.campusgo.mapper.OrderItemMapper;
 import com.campusgo.service.OrderService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +43,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
     private final NotificationClient notificationClient;
     private final RunnerClient runnerClient;
     private final CartItemMapper cartItemMapper;
+    private final OrderItemMapper orderItemMapper;
     private final StringRedisTemplate redis;
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
@@ -230,6 +240,7 @@ public class OrderServiceImpl implements OrderService {
 
         Map<Long, MenuItemDTO> menuMap = menuMap(req.getMerchantId());
         long totalCents = 0L;
+        List<OrderItem> orderItems = new ArrayList<>();
         for (CartItemRequest item : req.getItems()) {
             if (item.getMenuItemId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
                 throw new IllegalArgumentException("INVALID_ORDER_ITEM_QUANTITY");
@@ -238,7 +249,16 @@ public class OrderServiceImpl implements OrderService {
             if (menuItem == null || Boolean.FALSE.equals(menuItem.getEnabled())) {
                 throw new NoSuchElementException("MENU_ITEM_NOT_FOUND");
             }
-            totalCents += menuItem.getPriceCents() * item.getQuantity();
+            long subtotal = menuItem.getPriceCents() * item.getQuantity();
+            totalCents += subtotal;
+            orderItems.add(OrderItem.builder()
+                    .merchantId(req.getMerchantId())
+                    .menuItemId(item.getMenuItemId())
+                    .itemName(menuItem.getName())
+                    .unitPriceCents(menuItem.getPriceCents())
+                    .quantity(item.getQuantity())
+                    .subtotalCents(subtotal)
+                    .build());
         }
 
         Order o = Order.builder()
@@ -251,6 +271,12 @@ public class OrderServiceImpl implements OrderService {
                 .updatedAt(Instant.now())
                 .build();
         orderMapper.insert(o);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.setOrderId(o.getId());
+        }
+        if (!orderItems.isEmpty()) {
+            orderItemMapper.insertBatch(orderItems);
+        }
         assignRunnerIfAvailable(o);
 
         if (idemKey != null && !idemKey.isBlank()) {
@@ -353,6 +379,52 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public MerchantAnalyticsDTO getMerchantAnalytics(Long merchantId, String weekStart) {
+        LocalDate start = parseOrCurrentWeekStart(weekStart);
+        LocalDate end = start.plusDays(6);
+
+        LocalDateTime startAt = start.atStartOfDay();
+        LocalDateTime endAtExclusive = end.plusDays(1).atStartOfDay();
+
+        List<MerchantDailyRevenueRow> rows = orderMapper.statDailyRevenueByMerchant(merchantId, startAt, endAtExclusive);
+        Map<String, Long> byDay = new HashMap<>();
+        if (rows != null) {
+            for (MerchantDailyRevenueRow row : rows) {
+                if (row == null || row.getDayKey() == null) {
+                    continue;
+                }
+                byDay.put(row.getDayKey(), row.getAmountCents() == null ? 0L : row.getAmountCents());
+            }
+        }
+
+        List<MerchantDailyRevenueDTO> daily = new ArrayList<>();
+        long weekRevenue = 0L;
+        for (int i = 0; i < 7; i++) {
+            LocalDate d = start.plusDays(i);
+            String key = d.toString();
+            long amount = byDay.getOrDefault(key, 0L);
+            weekRevenue += amount;
+            daily.add(new MerchantDailyRevenueDTO(key, amount));
+        }
+
+        Long lifetime = orderMapper.statRevenueByMerchant(merchantId);
+        Long annual = orderMapper.statRevenueByMerchantSince(merchantId, LocalDateTime.now().minusYears(1));
+        Long completedCount = orderMapper.statCompletedOrderCountByMerchant(merchantId);
+        List<MerchantItemShareDTO> itemShare = orderMapper.statItemShareByMerchant(merchantId);
+
+        return MerchantAnalyticsDTO.builder()
+                .weekStart(start.toString())
+                .weekEnd(end.toString())
+                .selectedWeekRevenueCents(weekRevenue)
+                .lifetimeRevenueCents(lifetime == null ? 0L : lifetime)
+                .annualRevenueCents(annual == null ? 0L : annual)
+                .completedOrderCount(completedCount == null ? 0L : completedCount)
+                .dailyRevenue(daily)
+                .itemShare(itemShare == null ? Collections.emptyList() : itemShare)
+                .build();
+    }
+
+    @Override
     public List<OrderDetail> listRunnerOrders(Long runnerId) {
         return toOrderDetails(orderMapper.listByRunnerId(runnerId));
     }
@@ -392,7 +464,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Order updated = orderMapper.findById(orderId).orElseThrow();
         try {
-            notifyOrderDelivered(updated.getId(), updated.getUserId(), updated.getMerchantId());
+            notifyOrderDelivered(updated.getId(), updated.getUserId(), updated.getMerchantId(), updated.getRunnerId());
         } catch (Exception ignore) {
         }
         return buildOrderDetail(updated, paymentStatus);
@@ -424,12 +496,15 @@ public class OrderServiceImpl implements OrderService {
         sendTemplateToTarget(TemplateKey.ORDER_ASSIGNED, NotificationTargetType.RUNNER, o.getRunnerId(), params);
     }
 
-    private void notifyOrderDelivered(Long orderId, Long userId, Long merchantId) {
+    private void notifyOrderDelivered(Long orderId, Long userId, Long merchantId, Long runnerId) {
         Map<String, Object> params = new HashMap<>();
         params.put("orderId", orderId);
 
         sendTemplateToTarget(TemplateKey.ORDER_DELIVERED, NotificationTargetType.USER, userId, params);
         sendTemplateToTarget(TemplateKey.ORDER_DELIVERED, NotificationTargetType.MERCHANT, merchantId, params);
+        if (runnerId != null) {
+            sendTemplateToTarget(TemplateKey.ORDER_DELIVERED, NotificationTargetType.RUNNER, runnerId, params);
+        }
     }
 
     private void sendTemplateToTarget(TemplateKey template, NotificationTargetType targetType, Long targetId, Map<String, Object> params) {
@@ -468,9 +543,12 @@ public class OrderServiceImpl implements OrderService {
             }
             orderMapper.updateRunner(o.getId(), runner.getId());
             orderMapper.updateStatus(o.getId(), "ORDER_ASSIGNED");
-            refreshRunnerWorkloadStatus(runner.getId());
             o.setRunnerId(runner.getId());
             o.setStatus("ORDER_ASSIGNED");
+            try {
+                refreshRunnerWorkloadStatus(runner.getId());
+            } catch (Exception ignore) {
+            }
         } catch (Exception ignore) {
             // keep order created if runner service is temporarily unavailable
         }
@@ -492,6 +570,17 @@ public class OrderServiceImpl implements OrderService {
                 .totalQuantity(0)
                 .totalCents(0L)
                 .build();
+    }
+
+    private LocalDate parseOrCurrentWeekStart(String weekStart) {
+        try {
+            if (weekStart != null && !weekStart.isBlank()) {
+                LocalDate parsed = LocalDate.parse(weekStart);
+                return parsed.with(java.time.DayOfWeek.MONDAY);
+            }
+        } catch (Exception ignore) {
+        }
+        return LocalDate.now().with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
     }
 
     private CartSnapshot readCart(Long userId) {

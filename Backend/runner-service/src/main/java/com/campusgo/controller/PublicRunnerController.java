@@ -32,14 +32,17 @@ public class PublicRunnerController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<RunnerDTO> get(@PathVariable("id") Long id) {
         return service.findById(id).map(RunnerConverter::toPublicDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/me")
-    public ResponseEntity<RunnerDTO> me(@RequestHeader("X-User-Id") Long userId,
+    public ResponseEntity<RunnerDTO> me(@RequestHeader(value = "X-User-Id", required = false) Long userId,
                                         @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) {
             return ResponseEntity.status(403).build();
         }
@@ -54,29 +57,46 @@ public class PublicRunnerController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     public RunnerDTO updateBasic(@PathVariable Long id, @RequestBody RunnerUpdateRequest req) {
         return RunnerConverter.toPublicDTO(service.updateBasic(id, req.getPhone(), req.getVehicleType()));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<RunnerDTO> updateMe(@RequestHeader("X-User-Id") Long userId,
+    public ResponseEntity<RunnerDTO> updateMe(@RequestHeader(value = "X-User-Id", required = false) Long userId,
                                               @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                               @RequestBody RunnerUpdateRequest req) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) {
             return ResponseEntity.status(403).build();
         }
         return ResponseEntity.ok(RunnerConverter.toPublicDTO(service.updateBasic(userId, req.getPhone(), req.getVehicleType())));
     }
 
+    @PutMapping("/me/password")
+    public ResponseEntity<Void> updateMyPassword(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+                                                 @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                                 @RequestBody UpdatePasswordRequest req) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
+        if (pt == null || !"RUNNER".equalsIgnoreCase(pt)) {
+            return ResponseEntity.status(403).build();
+        }
+        service.updatePassword(userId, req.getNewPassword());
+        return ResponseEntity.noContent().build();
+    }
 
-    @PatchMapping("/{id}/location")
+
+    @PatchMapping("/{id:\\d+}/location")
     public RunnerDTO updateLocation(@PathVariable Long id, @RequestBody UpdateLocationRequest req) {
         return RunnerConverter.toPublicDTO(service.updateLocation(id, req.getLatitude(), req.getLongitude()));
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean removed = service.delete(id);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

@@ -19,6 +19,7 @@ public interface RunnerService {
 
 
     Runner updateBasic(Long id, String phone, VehicleType vehicleType);
+    void updatePassword(Long id, String newPassword);
     Runner updateLocation(Long id, Double lat, Double lng);
 
 

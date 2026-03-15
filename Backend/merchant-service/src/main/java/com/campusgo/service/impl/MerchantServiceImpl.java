@@ -49,8 +49,8 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     @Transactional
-    public Merchant updateBasic(Long id, String phone, String address, List<String> tags) {
-        mapper.updateBasic(id, phone, address, tags);
+    public Merchant updateBasic(Long id, String name, String phone, String address, List<String> tags) {
+        mapper.updateBasic(id, name, phone, address, tags);
         return mapper.findById(id).orElse(null);
     }
 
@@ -59,6 +59,15 @@ public class MerchantServiceImpl implements MerchantService {
     public Merchant updateStatus(Long id, MerchantStatus status) {
         mapper.updateStatus(id, status);
         return mapper.findById(id).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(Long id, String newPassword) {
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new IllegalArgumentException("INVALID_PASSWORD");
+        }
+        mapper.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
     }
 
     @Override

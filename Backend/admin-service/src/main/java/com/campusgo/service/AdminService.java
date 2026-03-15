@@ -16,5 +16,6 @@ public interface AdminService {
     List<Admin> findAll();
     Admin updateBasic(Long id, String email, String phone);
     Admin updateStatus(Long id, Boolean enabled);
+    void updatePassword(Long id, String rawPassword);
     boolean delete(Long id);
 }

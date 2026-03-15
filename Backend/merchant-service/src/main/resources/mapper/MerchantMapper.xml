@@ -64,7 +64,8 @@
 
     <update id="updateBasic">
         UPDATE merchants
-        SET phone = #{phone},
+        SET name = #{name},
+            phone = #{phone},
             address = #{address},
             tags = #{tags, typeHandler=com.campusgo.mybatis.StringListJsonTypeHandler},
             updated_at = NOW()
@@ -74,6 +75,13 @@
     <update id="updateStatus">
         UPDATE merchants
         SET status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE merchants
+        SET password_hash = #{passwordHash},
             updated_at = NOW()
         WHERE id = #{id}
     </update>

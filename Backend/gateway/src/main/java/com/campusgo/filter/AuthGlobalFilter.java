@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
@@ -28,11 +29,12 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     private static final List<String> WHITELIST_PREFIX = List.of(
             "/api/auth/",
-            "/api/merchants",
             "/v3/api-docs",
             "/swagger-ui",
             "/actuator"
     );
+    private static final Pattern PUBLIC_MERCHANT_DETAIL = Pattern.compile("^/api/merchants/\\d+$");
+    private static final Pattern PUBLIC_MERCHANT_MENU = Pattern.compile("^/api/merchants/\\d+/menu$");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, org.springframework.cloud.gateway.filter.GatewayFilterChain chain) {
@@ -76,6 +78,15 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     }
 
     private boolean isWhitelisted(String path) {
+        if ("/api/merchants".equals(path)) {
+            return true;
+        }
+        if (PUBLIC_MERCHANT_DETAIL.matcher(path).matches()) {
+            return true;
+        }
+        if (PUBLIC_MERCHANT_MENU.matcher(path).matches()) {
+            return true;
+        }
         for (String prefix : WHITELIST_PREFIX) {
             if (path.startsWith(prefix)) return true;
         }

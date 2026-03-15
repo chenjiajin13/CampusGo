@@ -7,6 +7,31 @@ spring:
   cloud:
     gateway:
       routes:
+        # compatibility: legacy frontend notification paths
+        - id: user-notifications-compat
+          uri: lb://notification-service
+          predicates: [Path=/api/users/notifications]
+          filters:
+            - name: SetPath
+              args:
+                template: /api/notifications/inbox/me
+
+        - id: merchant-notifications-compat
+          uri: lb://notification-service
+          predicates: [Path=/api/merchants/notifications]
+          filters:
+            - name: SetPath
+              args:
+                template: /api/notifications/inbox/me
+
+        - id: runner-notifications-compat
+          uri: lb://notification-service
+          predicates: [Path=/api/runners/notifications]
+          filters:
+            - name: SetPath
+              args:
+                template: /api/notifications/inbox/me
+
         # /api/users/** -> user-service  /users/**
         - id: user-docs
           uri: lb://user-service

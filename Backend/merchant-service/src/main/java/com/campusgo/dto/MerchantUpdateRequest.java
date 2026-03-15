@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MerchantUpdateRequest {
+    private String name;
     private String phone;
     private String address;
     private List<String> tags;

@@ -35,5 +35,8 @@ public interface RunnerMapper {
                        @Param("lat") Double lat,
                        @Param("lng") Double lng);
 
+    int updatePassword(@Param("id") Long id,
+                       @Param("passwordHash") String passwordHash);
+
     int deleteById(@Param("id") Long id);
 }

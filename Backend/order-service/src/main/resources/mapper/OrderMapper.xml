@@ -60,6 +60,52 @@
           AND status IN ('ORDER_ASSIGNED', 'ORDER_PICKED_UP')
     </select>
 
+    <select id="statDailyRevenueByMerchant" resultType="com.campusgo.dto.MerchantDailyRevenueRow">
+        SELECT DATE_FORMAT(updated_at, '%Y-%m-%d') AS dayKey,
+               COALESCE(SUM(amount_cents), 0) AS amountCents
+        FROM orders
+        WHERE merchant_id = #{merchantId}
+          AND status = 'ORDER_DELIVERED'
+          AND updated_at <![CDATA[>=]]> #{startAt}
+          AND updated_at <![CDATA[<]]> #{endAt}
+        GROUP BY DATE_FORMAT(updated_at, '%Y-%m-%d')
+        ORDER BY dayKey ASC
+    </select>
+
+    <select id="statRevenueByMerchant" resultType="long">
+        SELECT COALESCE(SUM(amount_cents), 0)
+        FROM orders
+        WHERE merchant_id = #{merchantId}
+          AND status = 'ORDER_DELIVERED'
+    </select>
+
+    <select id="statRevenueByMerchantSince" resultType="long">
+        SELECT COALESCE(SUM(amount_cents), 0)
+        FROM orders
+        WHERE merchant_id = #{merchantId}
+          AND status = 'ORDER_DELIVERED'
+          AND updated_at <![CDATA[>=]]> #{sinceAt}
+    </select>
+
+    <select id="statCompletedOrderCountByMerchant" resultType="long">
+        SELECT COUNT(1)
+        FROM orders
+        WHERE merchant_id = #{merchantId}
+          AND status = 'ORDER_DELIVERED'
+    </select>
+
+    <select id="statItemShareByMerchant" resultType="com.campusgo.dto.MerchantItemShareDTO">
+        SELECT oi.item_name AS itemName,
+               COALESCE(SUM(oi.quantity), 0) AS quantity,
+               COALESCE(SUM(oi.subtotal_cents), 0) AS amountCents
+        FROM order_items oi
+        INNER JOIN orders o ON o.id = oi.order_id
+        WHERE o.merchant_id = #{merchantId}
+          AND o.status = 'ORDER_DELIVERED'
+        GROUP BY oi.item_name
+        ORDER BY quantity DESC, amountCents DESC
+    </select>
+
     <update id="updateStatus">
         UPDATE orders
         SET status = #{status},

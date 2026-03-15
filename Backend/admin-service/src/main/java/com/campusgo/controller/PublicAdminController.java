@@ -2,6 +2,7 @@ package com.campusgo.controller;
 
 import com.campusgo.dto.AdminDTO;
 import com.campusgo.dto.AdminProfileUpdateRequest;
+import com.campusgo.dto.UpdatePasswordRequest;
 import com.campusgo.mapper.AdminConverter;
 import com.campusgo.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,11 @@ public class PublicAdminController {
     private final AdminService adminService;
 
     @GetMapping("/me")
-    public ResponseEntity<AdminDTO> me(@RequestHeader("X-User-Id") Long userId,
+    public ResponseEntity<AdminDTO> me(@RequestHeader(value = "X-User-Id", required = false) Long userId,
                                        @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         if (pt == null || !"ADMIN".equalsIgnoreCase(pt)) {
             return ResponseEntity.status(403).build();
         }
@@ -33,14 +37,30 @@ public class PublicAdminController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<AdminDTO> updateMe(@RequestHeader("X-User-Id") Long userId,
+    public ResponseEntity<AdminDTO> updateMe(@RequestHeader(value = "X-User-Id", required = false) Long userId,
                                              @RequestHeader(value = "X-Principal-Type", required = false) String pt,
                                              @RequestBody AdminProfileUpdateRequest req) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         if (pt == null || !"ADMIN".equalsIgnoreCase(pt)) {
             return ResponseEntity.status(403).build();
         }
         AdminDTO dto = AdminConverter.toDTO(adminService.updateBasic(userId, req.getEmail(), req.getPhone()));
         return dto == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(dto);
     }
-}
 
+    @PutMapping("/me/password")
+    public ResponseEntity<Void> updateMyPassword(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+                                                 @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                                 @RequestBody UpdatePasswordRequest req) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
+        if (pt == null || !"ADMIN".equalsIgnoreCase(pt)) {
+            return ResponseEntity.status(403).build();
+        }
+        adminService.updatePassword(userId, req.getNewPassword());
+        return ResponseEntity.noContent().build();
+    }
+}

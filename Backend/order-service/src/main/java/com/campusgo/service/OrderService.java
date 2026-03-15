@@ -6,6 +6,7 @@ import com.campusgo.dto.CartSummaryDTO;
 import com.campusgo.dto.CartItemRequest;
 import com.campusgo.dto.QuickOrderRequest;
 import com.campusgo.dto.BatchCheckoutResponse;
+import com.campusgo.dto.MerchantAnalyticsDTO;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public interface OrderService {
     OrderDetail quickOrder(Long userId, QuickOrderRequest req, String idemKey);
     List<OrderDetail> listMyOrders(Long userId);
     List<OrderDetail> listMerchantOrders(Long merchantId);
+    MerchantAnalyticsDTO getMerchantAnalytics(Long merchantId, String weekStart);
     List<OrderDetail> listRunnerOrders(Long runnerId);
     OrderDetail completeByRunner(Long runnerId, Long orderId);
 }

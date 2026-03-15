@@ -5,6 +5,7 @@ import com.campusgo.dto.CartSummaryDTO;
 import com.campusgo.dto.OrderDetail;
 import com.campusgo.dto.QuickOrderRequest;
 import com.campusgo.dto.BatchCheckoutResponse;
+import com.campusgo.dto.MerchantAnalyticsDTO;
 import com.campusgo.exception.UnauthorizedException;
 import com.campusgo.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -120,6 +121,14 @@ public class OrderController {
                                             @RequestHeader(value = "X-Principal-Type", required = false) String pt) {
         if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
         return orderService.listMerchantOrders(merchantId);
+    }
+
+    @GetMapping("/merchant/me/analytics")
+    public MerchantAnalyticsDTO merchantAnalytics(@RequestHeader("X-User-Id") Long merchantId,
+                                                  @RequestHeader(value = "X-Principal-Type", required = false) String pt,
+                                                  @RequestParam(value = "weekStart", required = false) String weekStart) {
+        if (pt == null || !"MERCHANT".equalsIgnoreCase(pt)) throw new UnauthorizedException("FORBIDDEN");
+        return orderService.getMerchantAnalytics(merchantId, weekStart);
     }
 
     @GetMapping("/merchant/me/{orderId}")

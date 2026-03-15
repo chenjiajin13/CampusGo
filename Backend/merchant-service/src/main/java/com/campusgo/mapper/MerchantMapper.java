@@ -22,12 +22,16 @@ public interface MerchantMapper {
     List<Merchant> search(@Param("kw") String keyword);
 
     int updateBasic(@Param("id") Long id,
+                    @Param("name") String name,
                     @Param("phone") String phone,
                     @Param("address") String address,
                     @Param("tags") List<String> tags);
 
     int updateStatus(@Param("id") Long id,
                      @Param("status") MerchantStatus status);
+
+    int updatePassword(@Param("id") Long id,
+                       @Param("passwordHash") String passwordHash);
 
     int deleteById(@Param("id") Long id);
 }

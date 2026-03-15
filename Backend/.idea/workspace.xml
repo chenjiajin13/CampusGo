@@ -4,15 +4,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Debug for the payment service">
+    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="Modify the interface of runnerservice">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0b9da47e-a87a-4bf4-a46e-d6ddb9f4c80e.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0b9da47e-a87a-4bf4-a46e-d6ddb9f4c80e.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/controller/PublicAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/controller/PublicAdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/mapper/AdminMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/mapper/AdminMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/service/AdminService.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/service/AdminService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/service/impl/AdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/java/com/campusgo/service/impl/AdminServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-service/src/main/resources/mapper/AdminMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/admin-service/src/main/resources/mapper/AdminMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/client/AdminClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/client/AdminClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/AuthFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/campusgo/service/AuthFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config-server/src/main/resources/configs/notification-service-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config-server/src/main/resources/configs/notification-service-dev.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/PublicMerchantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/controller/PublicMerchantController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/dto/MerchantUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/dto/MerchantUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/mapper/MerchantMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/mapper/MerchantMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/MerchantService.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/MerchantService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/impl/MerchantServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/java/com/campusgo/service/impl/MerchantServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/merchant-service/src/main/resources/mapper/MerchantMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/merchant-service/src/main/resources/mapper/MerchantMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/controller/PublicNotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/campusgo/controller/PublicNotificationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notification-service/src/main/resources/mapper/NotificationMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/resources/mapper/NotificationMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/OrderDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/OrderDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/dto/UserDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/mapper/OrderMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/mapper/OrderMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/OrderService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/java/com/campusgo/service/impl/OrderServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/src/main/resources/mapper/OrderMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/resources/mapper/OrderMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order-service/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/main/resources/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/InternalPaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/payment-service/src/main/java/com/campusgo/controller/InternalPaymentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/controller/PublicRunnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/controller/PublicRunnerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/mapper/RunnerMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/mapper/RunnerMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/RunnerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/RunnerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/impl/RunnerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/java/com/campusgo/service/impl/RunnerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runner-service/src/main/resources/mapper/RunnerMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/runner-service/src/main/resources/mapper/RunnerMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/controller/UserApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/campusgo/service/impl/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -334,7 +361,7 @@
       <workItem from="1772078867214" duration="12955000" />
       <workItem from="1772166166962" duration="1712000" />
       <workItem from="1773214964501" duration="728000" />
-      <workItem from="1773215745138" duration="27953000" />
+      <workItem from="1773215745138" duration="43973000" />
     </task>
     <task id="LOCAL-00001" summary="Modify the config module">
       <option name="closed" value="true" />
@@ -408,7 +435,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773304658641</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Modify the interface of runnerservice">
+      <option name="closed" value="true" />
+      <created>1773309382708</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1773309382708</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -435,7 +470,8 @@
     <MESSAGE value="Modify the adding to cart logic and add an order viewing interface." />
     <MESSAGE value="Modify the table structure and recharge/deduction logic of payservice." />
     <MESSAGE value="Debug for the payment service" />
-    <option name="LAST_COMMIT_MESSAGE" value="Debug for the payment service" />
+    <MESSAGE value="Modify the interface of runnerservice" />
+    <option name="LAST_COMMIT_MESSAGE" value="Modify the interface of runnerservice" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

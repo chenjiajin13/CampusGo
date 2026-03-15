@@ -88,6 +88,13 @@
         WHERE id = #{id}
     </update>
 
+    <update id="updatePassword">
+        UPDATE runners
+        SET password_hash = #{passwordHash},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
     <delete id="deleteById">
         DELETE FROM runners WHERE id = #{id}
     </delete>

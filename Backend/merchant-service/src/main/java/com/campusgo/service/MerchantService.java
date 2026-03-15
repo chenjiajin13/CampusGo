@@ -20,7 +20,8 @@ public interface MerchantService {
     java.util.List<Merchant> findAll();
 
 
-    Merchant updateBasic(Long id, String phone, String address, java.util.List<String> tags);
+    Merchant updateBasic(Long id, String name, String phone, String address, java.util.List<String> tags);
+    void updatePassword(Long id, String newPassword);
     Merchant updateStatus(Long id, MerchantStatus status);
     boolean delete(Long id);
 }

@@ -65,6 +65,15 @@ public class RunnerServiceImpl implements RunnerService {
 
     @Override
     @Transactional
+    public void updatePassword(Long id, String newPassword) {
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new IllegalArgumentException("INVALID_PASSWORD");
+        }
+        mapper.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+    }
+
+    @Override
+    @Transactional
     public Runner updateLocation(Long id, Double lat, Double lng) {
         mapper.updateLocation(id, lat, lng);
         return mapper.findById(id).orElse(null);

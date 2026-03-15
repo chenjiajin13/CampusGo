@@ -58,6 +58,15 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    public void updatePassword(Long id, String rawPassword) {
+        if (rawPassword == null || rawPassword.isBlank()) {
+            throw new IllegalArgumentException("newPassword must not be blank");
+        }
+        mapper.updatePassword(id, BCrypt.hashpw(rawPassword, BCrypt.gensalt()));
+    }
+
+    @Override
+    @Transactional
     public boolean delete(Long id) {
         return mapper.deleteById(id) > 0;
     }

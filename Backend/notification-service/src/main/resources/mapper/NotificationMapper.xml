@@ -38,7 +38,9 @@
 
     <select id="listInbox" resultMap="NotificationMap">
         SELECT <include refid="cols"/> FROM notifications
-        WHERE target_type = #{type} AND target_id = #{targetId}
+        WHERE target_type = #{type}
+          AND target_id = #{targetId}
+          AND channel = 'PUSH'
         ORDER BY created_at DESC
     </select>
 

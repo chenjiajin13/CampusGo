@@ -1,9 +1,12 @@
 package com.campusgo.mapper;
 
 import com.campusgo.domain.Order;
+import com.campusgo.dto.MerchantDailyRevenueRow;
+import com.campusgo.dto.MerchantItemShareDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,19 @@ public interface OrderMapper {
     List<Order> listByRunnerId(@Param("runnerId") Long runnerId);
 
     int countActiveByRunnerId(@Param("runnerId") Long runnerId);
+
+    List<MerchantDailyRevenueRow> statDailyRevenueByMerchant(@Param("merchantId") Long merchantId,
+                                                             @Param("startAt") LocalDateTime startAt,
+                                                             @Param("endAt") LocalDateTime endAt);
+
+    Long statRevenueByMerchant(@Param("merchantId") Long merchantId);
+
+    Long statRevenueByMerchantSince(@Param("merchantId") Long merchantId,
+                                    @Param("sinceAt") LocalDateTime sinceAt);
+
+    Long statCompletedOrderCountByMerchant(@Param("merchantId") Long merchantId);
+
+    List<MerchantItemShareDTO> statItemShareByMerchant(@Param("merchantId") Long merchantId);
 
     int updateStatus(@Param("id") Long id,
                      @Param("status") String status);

@@ -193,7 +193,12 @@ public class AuthFacade {
 
     // for admin
     public TokenPairResponse loginAdmin(LoginRequest req) {
-        AdminAuthDTO admin = adminClient.findByUsername(req.getUsername());
+        AdminAuthDTO admin;
+        try {
+            admin = adminClient.findByUsername(req.getUsername());
+        } catch (Exception ex) {
+            throw new UnauthorizedException("ADMIN_SERVICE_UNAVAILABLE");
+        }
         if (admin == null) {
             throw new UnauthorizedException("ADMIN_NOT_FOUND");
         }

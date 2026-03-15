@@ -25,5 +25,7 @@ public interface AdminMapper {
 
     int updateStatus(@Param("id") Long id, @Param("enabled") Boolean enabled);
 
+    int updatePassword(@Param("id") Long id, @Param("passwordHash") String passwordHash);
+
     int deleteById(@Param("id") Long id);
 }

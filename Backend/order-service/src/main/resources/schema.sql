@@ -22,3 +22,18 @@ CREATE TABLE IF NOT EXISTS cart_items (
     KEY idx_cart_user (user_id),
     KEY idx_cart_user_merchant (user_id, merchant_id)
 );
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT NOT NULL,
+    merchant_id BIGINT NOT NULL,
+    menu_item_id BIGINT NOT NULL,
+    item_name VARCHAR(128) NOT NULL,
+    unit_price_cents BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    subtotal_cents BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_oi_order (order_id),
+    KEY idx_oi_merchant (merchant_id),
+    KEY idx_oi_menu_item (menu_item_id)
+);
