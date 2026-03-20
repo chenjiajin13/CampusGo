@@ -14,26 +14,26 @@ import org.springframework.kafka.support.Acknowledgment;
 public class OrderEventsConsumer {
 
     private final KafkaDedup dedup;
-    private final NotificationService notificationService; // 你项目里真正发通知的服务类
+    private final NotificationService notificationService; // Service that performs actual notification dispatch.
 
     @KafkaListener(topics = "order.events", groupId = "notification-service")
     public void on(OrderEvent event, Acknowledgment ack) {
 
-        // 1) 幂等：处理过就直接 ack
+        // 1) Idempotency: if already processed, acknowledge and return.
         if (!dedup.firstTime(event.eventId())) {
             ack.acknowledge();
             return;
         }
 
         try {
-            // 2) 处理业务（发通知）
+            // 2) Handle business logic (send notifications).
             notificationService.handle(event);
 
-            // 3) 成功才提交 offset
+            // 3) Commit offset only after successful processing.
             ack.acknowledge();
         } catch (Exception e) {
             log.error("consume order event failed, eventId={}", event.eventId(), e);
-            throw e; // 触发重试，最后进 order.events.DLT
+            throw e; // Trigger retry; eventually route to order.events.DLT.
         }
     }
 }

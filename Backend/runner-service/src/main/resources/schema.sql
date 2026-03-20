@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS runners (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(32),
+    vehicle_type VARCHAR(32) NOT NULL,
+    status VARCHAR(32) NOT NULL DEFAULT 'OFFLINE',
+    latitude DOUBLE NULL,
+    longitude DOUBLE NULL,
+    rating DOUBLE NOT NULL DEFAULT 5.0,
+    completed_orders INT NOT NULL DEFAULT 0,
+    total_earnings_cents BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_runners_username (username)
+);
+

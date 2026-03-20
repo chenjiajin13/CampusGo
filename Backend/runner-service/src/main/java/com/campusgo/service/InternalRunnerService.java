@@ -8,7 +8,7 @@ import com.campusgo.enums.RunnerStatus;
 import java.util.Optional;
 
 
-/** （auth-service / order-service）*/
+/** Internal runner service used by auth-service and order-service. */
 public interface InternalRunnerService {
     Optional<Runner> findByUsername(String username);
     Optional<Runner> findById(Long id);

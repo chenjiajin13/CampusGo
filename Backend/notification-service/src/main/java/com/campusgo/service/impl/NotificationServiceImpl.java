@@ -50,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
         String msg = "Order " + e.orderId() + " status changed: " + e.type();
         System.out.println("[NOTIFY] " + msg);
 
-        // 以后这里替换为：站内信 / push / email / websocket 等
+        // TODO: Replace with real channel dispatch (in-app, push, email, websocket).
     }
 
 }

@@ -7,7 +7,7 @@ import com.campusgo.enums.MerchantStatus;
 import java.util.Optional;
 
 
-/** Internal service（auth/order） */
+/** Internal merchant service used by auth-service and order-service. */
 public interface InternalMerchantService {
     Optional<Merchant> findByUsername(String username); //  auth-service
     Optional<Merchant> findById(Long id); //  order-service

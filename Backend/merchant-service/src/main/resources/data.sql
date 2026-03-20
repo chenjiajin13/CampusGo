@@ -1,3 +1,33 @@
+-- Seed demo merchants (idempotent)
+-- Password for both demo merchants: 123456
+INSERT INTO merchants (username, password_hash, name, phone, address, status, latitude, longitude, rating, finished_orders, tags)
+SELECT 'kfc_owner',
+       '$2a$10$1m.HS.55Rq8pL2iry7qU4OeUyLnemFRMG1KZIHU4MCAubp5i/sdVO',
+       'KFC-NUS',
+       '88886666',
+       'COM2, NUS',
+       'OPEN',
+       1.2965,
+       103.7761,
+       4.6,
+       0,
+       JSON_ARRAY('chicken', 'set meal')
+WHERE NOT EXISTS (SELECT 1 FROM merchants WHERE username = 'kfc_owner');
+
+INSERT INTO merchants (username, password_hash, name, phone, address, status, latitude, longitude, rating, finished_orders, tags)
+SELECT 'mcdonald_owner',
+       '$2a$10$1m.HS.55Rq8pL2iry7qU4OeUyLnemFRMG1KZIHU4MCAubp5i/sdVO',
+       'McDonalds-NUS',
+       '88887777',
+       'COM2, NUS',
+       'OPEN',
+       1.2972,
+       103.7733,
+       4.7,
+       0,
+       JSON_ARRAY('burger', 'fast food')
+WHERE NOT EXISTS (SELECT 1 FROM merchants WHERE username = 'mcdonald_owner');
+
 -- Seed menu items for demo merchants (idempotent)
 
 -- McDonalds-NUS
@@ -73,4 +103,3 @@ WHERE m.name = 'KFC-NUS'
       SELECT 1 FROM menu_items mi
       WHERE mi.merchant_id = m.id AND mi.name = 'Pepsi'
   );
-

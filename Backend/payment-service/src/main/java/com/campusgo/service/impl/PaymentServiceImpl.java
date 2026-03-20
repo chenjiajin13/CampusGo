@@ -74,7 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(status);
         mapper.updateStatus(id, status);
 
-        // 只在最终状态时发事件
+        // Publish events only when payment reaches a final status.
         if (status == PaymentStatus.SUCCESS) {
 
             publisher.publish(new PaymentEvent(

@@ -17,7 +17,7 @@ public class InMemoryOrderStore {
 
     @PostConstruct
     public void initMock() {
-        // 可选：初始化一条订单
+        // Optional: initialize one sample order record.
         create(1L, 2000L, 2999L);
     }
 

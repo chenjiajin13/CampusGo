@@ -1,3 +1,21 @@
+CREATE TABLE IF NOT EXISTS merchants (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    phone VARCHAR(32),
+    address VARCHAR(255),
+    status VARCHAR(32) NOT NULL DEFAULT 'PAUSED',
+    latitude DOUBLE NULL,
+    longitude DOUBLE NULL,
+    rating DOUBLE NOT NULL DEFAULT 4.6,
+    finished_orders INT NOT NULL DEFAULT 0,
+    tags JSON NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_merchants_username (username)
+);
+
 CREATE TABLE IF NOT EXISTS menu_items (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     merchant_id BIGINT NOT NULL,
@@ -9,4 +27,3 @@ CREATE TABLE IF NOT EXISTS menu_items (
     INDEX idx_menu_merchant (merchant_id),
     CONSTRAINT chk_menu_price_non_negative CHECK (price_cents >= 0)
 );
-
