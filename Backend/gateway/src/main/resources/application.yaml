@@ -216,23 +216,19 @@ spring:
     discovery:
       locator:
         enabled: false
+    globalcors:
+      corsConfigurations:
+        '[/**]':
+          allowedOriginPatterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:5173}
+          allowedMethods: "*"
+          allowedHeaders: "*"
+          allowCredentials: true
 
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
-# CORS(optional)
-# spring:
-#   cloud:
-#     gateway:
-#       globalcors:
-#         corsConfigurations:
-#           '[/**]':
-#             allowedOrigins: "*"
-#             allowedMethods: "*"
-#             allowedHeaders: "*"
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
 
 springdoc:
   swagger-ui:
@@ -260,4 +256,5 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,info"
+        include: "health,info,prometheus"
+

@@ -1,0 +1,249 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: campusgo-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: Asia/Singapore
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: campusgo-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: campusgo-zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: campusgo-kafka
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: campusgo-kafka-ui
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+
+  config-server:
+    build:
+      context: ./config-server
+    image: campusgo/config-server:latest
+    container_name: campusgo-config-server
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      EUREKA_SERVER_URL: http://registry-eureka:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  registry-eureka:
+    build:
+      context: ./registry-eureka
+    image: campusgo/registry-eureka:latest
+    container_name: campusgo-registry-eureka
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - config-server
+
+  user-service:
+    build:
+      context: ./user-service
+    image: campusgo/user-service:latest
+    container_name: campusgo-user-service
+    restart: unless-stopped
+    environment: &app_env
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CLOUD_CONFIG_PROFILE: prod
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://registry-eureka:8761/eureka/
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USE_SSL: "false"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET}
+      CORS_ALLOWED_ORIGIN_PATTERNS: ${CORS_ALLOWED_ORIGIN_PATTERNS:-http://localhost:5173}
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+
+  auth-service:
+    build:
+      context: ./auth-service
+    image: campusgo/auth-service:latest
+    container_name: campusgo-auth-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+      - redis
+
+  merchant-service:
+    build:
+      context: ./merchant-service
+    image: campusgo/merchant-service:latest
+    container_name: campusgo-merchant-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+
+  runner-service:
+    build:
+      context: ./runner-service
+    image: campusgo/runner-service:latest
+    container_name: campusgo-runner-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+
+  order-service:
+    build:
+      context: ./order-service
+    image: campusgo/order-service:latest
+    container_name: campusgo-order-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+      - redis
+      - kafka
+
+  payment-service:
+    build:
+      context: ./payment-service
+    image: campusgo/payment-service:latest
+    container_name: campusgo-payment-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+      - kafka
+
+  notification-service:
+    build:
+      context: ./notification-service
+    image: campusgo/notification-service:latest
+    container_name: campusgo-notification-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+      - kafka
+
+  admin-service:
+    build:
+      context: ./admin-service
+    image: campusgo/admin-service:latest
+    container_name: campusgo-admin-service
+    restart: unless-stopped
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - mysql
+
+  gateway:
+    build:
+      context: ./gateway
+    image: campusgo/gateway:latest
+    container_name: campusgo-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *app_env
+    depends_on:
+      - config-server
+      - registry-eureka
+      - user-service
+      - auth-service
+      - merchant-service
+      - runner-service
+      - order-service
+      - payment-service
+      - notification-service
+      - admin-service
+
+volumes:
+  mysql-data:
+  redis-data:

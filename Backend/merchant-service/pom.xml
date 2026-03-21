@@ -18,9 +18,10 @@
 
     <dependencies>
         <!-- Web -->
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!--  From Config Server -->
@@ -29,7 +30,7 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
-        <!-- 注册到 Eureka -->
+        <!-- 注册�?Eureka -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -68,4 +69,5 @@
 
     </dependencies>
 </project>
+
 

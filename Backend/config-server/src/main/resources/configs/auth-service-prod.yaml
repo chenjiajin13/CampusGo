@@ -1,0 +1,37 @@
+server:
+  port: 9003
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: auth-service
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL}
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+logging:
+  level:
+    root: INFO
+
+auth:
+  jwt:
+    issuer: campusgo-auth
+    secret: ${AUTH_JWT_SECRET}
+    expiresMinutes: ${AUTH_JWT_EXPIRES_MINUTES:60}
