@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="feat: fix bugs for cloud deployment">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="feat: fix bugs for cloud deployment" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -329,7 +327,7 @@
       <workItem from="1773214964501" duration="728000" />
       <workItem from="1773215745138" duration="45550000" />
       <workItem from="1773996627604" duration="13057000" />
-      <workItem from="1774159282261" duration="708000" />
+      <workItem from="1774159282261" duration="1347000" />
     </task>
     <task id="LOCAL-00001" summary="Modify the config module">
       <option name="closed" value="true" />
@@ -443,7 +441,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774154031131</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="feat: fix bugs for cloud deployment">
+      <option name="closed" value="true" />
+      <created>1774162782355</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1774162782355</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
