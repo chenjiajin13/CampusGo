@@ -7,7 +7,3 @@ CREATE TABLE IF NOT EXISTS users (
     address VARCHAR(255),
     enabled TINYINT(1) NOT NULL DEFAULT 1
 );
-
-ALTER TABLE users
-    ADD COLUMN address VARCHAR(255) NULL AFTER phone;
-

@@ -80,7 +80,7 @@ services:
     ports:
       - "8888:8888"
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: native
       EUREKA_SERVER_URL: http://registry-eureka:8761/eureka/
     depends_on:
       mysql:
