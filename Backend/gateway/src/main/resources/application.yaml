@@ -213,16 +213,17 @@ spring:
 #                parts: 2
 #      default-filters:
 #        - RemoveRequestHeader=Cookie
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:5173}
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
     discovery:
       locator:
         enabled: false
-    globalcors:
-      corsConfigurations:
-        '[/**]':
-          allowedOriginPatterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:5173}
-          allowedMethods: "*"
-          allowedHeaders: "*"
-          allowCredentials: true
 
 
 eureka:

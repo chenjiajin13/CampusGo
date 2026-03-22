@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="feat: fix bugs for cloud deployment" />
+    <list default="true" id="970bed45-0f2d-493a-a5c5-1fac1dee231f" name="Changes" comment="feat: fix bugs for gateway">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/com/campusgo/filter/AuthGlobalFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/resources/application.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -327,7 +331,8 @@
       <workItem from="1773214964501" duration="728000" />
       <workItem from="1773215745138" duration="45550000" />
       <workItem from="1773996627604" duration="13057000" />
-      <workItem from="1774159282261" duration="1347000" />
+      <workItem from="1774159282261" duration="2505000" />
+      <workItem from="1774191411183" duration="399000" />
     </task>
     <task id="LOCAL-00001" summary="Modify the config module">
       <option name="closed" value="true" />
@@ -449,7 +454,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774162782355</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="feat: fix bugs for cloud deployment">
+      <option name="closed" value="true" />
+      <created>1774162833738</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1774162833738</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -481,7 +494,8 @@
     <MESSAGE value="feat:debug and modify the comments" />
     <MESSAGE value="feat:add docker file for each service and modify the config files" />
     <MESSAGE value="feat: fix bugs for cloud deployment" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: fix bugs for cloud deployment" />
+    <MESSAGE value="feat: fix bugs for gateway" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: fix bugs for gateway" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
