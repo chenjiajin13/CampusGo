@@ -11,6 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -40,7 +41,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, org.springframework.cloud.gateway.filter.GatewayFilterChain chain) {
         if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod())) {
-            return chain.filter(exchange);
+            return handlePreflight(exchange);
         }
 
         String path = exchange.getRequest().getURI().getPath();
@@ -106,6 +107,27 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         exchange.getResponse().getHeaders().set("X-Gateway-Version", "gw-auth-map-v2");
         return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
                 .bufferFactory().wrap(bytes)));
+    }
+
+
+    private Mono<Void> handlePreflight(ServerWebExchange exchange) {
+        String origin = exchange.getRequest().getHeaders().getFirst(HttpHeaders.ORIGIN);
+        String reqHeaders = exchange.getRequest().getHeaders().getFirst("Access-Control-Request-Headers");
+        if (origin == null || origin.isBlank()) {
+            origin = "*";
+        }
+        if (reqHeaders == null || reqHeaders.isBlank()) {
+            reqHeaders = "*";
+        }
+
+        exchange.getResponse().setStatusCode(HttpStatus.OK);
+        exchange.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+        exchange.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+        exchange.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, reqHeaders);
+        exchange.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "3600");
+        exchange.getResponse().getHeaders().set(HttpHeaders.VARY, "Origin,Access-Control-Request-Method,Access-Control-Request-Headers");
+        exchange.getResponse().getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+        return exchange.getResponse().setComplete();
     }
 
     private ParsedValidate parseValidate(String raw) throws Exception {
