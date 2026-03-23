@@ -19,6 +19,7 @@ import com.campusgo.dto.MerchantDailyRevenueRow;
 import com.campusgo.dto.MerchantItemShareDTO;
 import com.campusgo.dto.MenuItemDTO;
 import com.campusgo.dto.OrderDetail;
+import com.campusgo.dto.OrderItemDetailDTO;
 import com.campusgo.dto.QuickOrderRequest;
 import com.campusgo.dto.RunnerDTO;
 import com.campusgo.dto.TemplateSendRequest;
@@ -103,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetail getOrder(Long orderId) {
         Order o = orderMapper.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order not found: " + orderId));
-        return buildOrderDetail(o, null);
+        return buildOrderDetail(o, null, true);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
 
             notifyOrderPlaced(o.getId(), userId, merchantId);
             notifyOrderAssignedIfAny(o);
-            return buildOrderDetail(o, null);
+            return buildOrderDetail(o, null, false);
         } finally {
             redis.execute(UNLOCK_SCRIPT, Collections.singletonList(lk), lv);
         }
@@ -299,7 +300,7 @@ public class OrderServiceImpl implements OrderService {
             paymentStatus = payment == null ? null : payment.getStatus();
         }
 
-        return buildOrderDetail(o, paymentStatus);
+        return buildOrderDetail(o, paymentStatus, false);
     }
 
     @Override
@@ -438,7 +439,7 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("RUNNER_NOT_ASSIGNED_TO_ORDER");
         }
         if ("ORDER_DELIVERED".equalsIgnoreCase(o.getStatus())) {
-            return buildOrderDetail(o, null);
+            return buildOrderDetail(o, null, false);
         }
         if (!"ORDER_ASSIGNED".equalsIgnoreCase(o.getStatus()) && !"ORDER_PICKED_UP".equalsIgnoreCase(o.getStatus())) {
             throw new IllegalArgumentException("ORDER_NOT_COMPLETABLE");
@@ -467,7 +468,7 @@ public class OrderServiceImpl implements OrderService {
             notifyOrderDelivered(updated.getId(), updated.getUserId(), updated.getMerchantId(), updated.getRunnerId());
         } catch (Exception ignore) {
         }
-        return buildOrderDetail(updated, paymentStatus);
+        return buildOrderDetail(updated, paymentStatus, false);
     }
 
     @Transactional
@@ -690,12 +691,16 @@ public class OrderServiceImpl implements OrderService {
             return out;
         }
         for (Order o : orders) {
-            out.add(buildOrderDetail(o, null));
+            out.add(buildOrderDetail(o, null, false));
         }
         return out;
     }
 
     private OrderDetail buildOrderDetail(Order order, String paymentStatus) {
+        return buildOrderDetail(order, paymentStatus, false);
+    }
+
+    private OrderDetail buildOrderDetail(Order order, String paymentStatus, boolean includeItems) {
         UserDTO user = getUserCached(order.getUserId());
         OrderDetail detail = new OrderDetail(order.getId(), user, order.getStatus(), order.getAmountCents(), paymentStatus);
         detail.setUserId(order.getUserId());
@@ -709,6 +714,12 @@ public class OrderServiceImpl implements OrderService {
         boolean canComplete = order.getRunnerId() != null
                 && ("ORDER_ASSIGNED".equalsIgnoreCase(order.getStatus()) || "ORDER_PICKED_UP".equalsIgnoreCase(order.getStatus()));
         detail.setRunnerCanComplete(canComplete);
+        if (includeItems) {
+            List<OrderItemDetailDTO> items = orderItemMapper.listByOrderId(order.getId());
+            detail.setItems(items == null ? Collections.emptyList() : items);
+        } else {
+            detail.setItems(Collections.emptyList());
+        }
         return detail;
     }
 

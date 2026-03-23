@@ -2,6 +2,7 @@ package com.campusgo.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,7 @@ public class OrderDetail {
     private Long amountCents;
     private String paymentStatus;
     private Boolean runnerCanComplete;
+    private List<OrderItemDetailDTO> items;
 
     public OrderDetail(Long orderId, UserDTO user, String status, Long amountCents, String paymentStatus) {
         this.orderId = orderId;

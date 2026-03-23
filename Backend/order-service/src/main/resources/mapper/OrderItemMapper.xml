@@ -13,4 +13,15 @@
         </foreach>
     </insert>
 
+    <select id="listByOrderId" resultType="com.campusgo.dto.OrderItemDetailDTO">
+        SELECT menu_item_id AS menuItemId,
+               item_name AS itemName,
+               unit_price_cents AS unitPriceCents,
+               quantity,
+               subtotal_cents AS subtotalCents
+        FROM order_items
+        WHERE order_id = #{orderId}
+        ORDER BY id ASC
+    </select>
+
 </mapper>
