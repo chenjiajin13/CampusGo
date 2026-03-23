@@ -220,7 +220,7 @@ spring:
             allowedOriginPatterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:5173}
             allowedMethods: "*"
             allowedHeaders: "*"
-            allowCredentials: true
+            allowCredentials: false
     discovery:
       locator:
         enabled: false
